@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'App'
+    'App',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +71,7 @@ TEMPLATES = [
     },
 ]
 
+AUTH_USER_MODEL = 'App.Usuario'
 WSGI_APPLICATION = 'Agile.wsgi.application'
 
 
