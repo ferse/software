@@ -18,16 +18,16 @@ def logear(request):
     if request.method == 'POST':
         alias = request.POST['usuario']
         contra = request.POST['password']
-        #print(alias,contra)
-        user = authenticate(username=alias, password=contra)
-
+        print(alias,contra)
+        user = authenticate(request,username=alias, password=contra)
+        print(user)
         if user is not None:
             login(request, user)
             return redirect('home')
         else:
-            messages.error(request, "Usuario o contreaseña Incorrecta")
+            messages.error(request, "Usuario no valido")
+            print("No valido")
             return redirect('logear')
-
     return render(request,"App/login.html")
 
 def salir(request):
