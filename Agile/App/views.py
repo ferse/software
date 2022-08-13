@@ -6,8 +6,8 @@ from django.conf import settings
 
 # Create your views here.
 def home(request):
-    if not request.user.is_authenticated:
-        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    #if not request.user.is_authenticated:
+    #    return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     return render(request,"App/index.html")
 
 def logear(request):
