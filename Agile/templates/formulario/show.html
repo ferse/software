@@ -1,0 +1,35 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Formulario Records</title>  
+    {% load static %}  
+    <link rel="stylesheet" href="{% static 'css/Formulario.css' %}"/>  
+</head>  
+<body>  
+<table class="table table-striped table-bordered table-sm">  
+    <thead class="thead-dark">  
+    <tr>  
+        <th>Formulario ID</th>  
+        <th>Formulario Descripcion</th>   
+        <th>Actions</th>  
+    </tr>  
+    </thead>  
+    <tbody>  
+{% for formulario in formularios %}  
+    <tr>  
+        <td>{{ formulario.id }}</td>  
+        <td>{{ formulario.fdescripcion }}</td>  
+        <td>  
+            <a href="/edit/{{ formulario.id }}"><span class="glyphicon glyphicon-pencil" >Edit</span></a>  
+            <a href="/delete/{{ formulario.id }}">Delete</a>  
+        </td>  
+    </tr>  
+{% endfor %}  
+    </tbody>  
+</table>  
+<br>  
+<br>  
+<center><a href="/emp" class="btn btn-primary">Add New Record</a></center>  
+</body>  
+</html>
