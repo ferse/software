@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
+from .models import Usuario, Permiso, Rol
 
 # Create your views here.
 def home(request):
@@ -29,6 +30,18 @@ def logear(request):
             print("No valido")
             return redirect('logear')
     return render(request,"App/login.html")
+
+def usuarios(request):
+    usuarios = Usuario.objects.all()
+    return render(request, 'paginas/users.html', {'usuarios': usuarios})
+
+def permisos(request):
+    permisos = Permiso.objects.all()
+    return render(request, 'paginas/permisos.html', {'permisos': permisos})
+
+def roles(request):
+    roles = Rol.objects.all()
+    return render(request, 'paginas/roles.html', {'roles': roles})
 
 def salir(request):
     logout(request)

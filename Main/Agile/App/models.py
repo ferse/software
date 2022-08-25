@@ -53,7 +53,12 @@ class Usuario(AbstractBaseUser):
     objects = MyAccountManager()
 
     def __str__(self):
-        return self.alias
+        f1_str = self.date_joined.strftime("%d/%m/%Y")
+        f2_str = self.last_login.strftime("%d/%m/%Y")
+
+        fila = "Alias: " + self.alias + " - " + "Email: " + self.email + " - " + "Nombre: " + self.nombre + " - " + "Apellido: " + self.apellido + " - " + "Joined: " + f1_str + " - " + "Last Login: " + f2_str + " - " + "Admin: " + str(self.is_admin) + " - " + "Activo: " + str(self.is_active)
+        return fila
+
     def has_module_perms(self, app_label):
         return True
     def has_perm(self, perm, obj=None):
@@ -66,10 +71,18 @@ class Permiso(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
     id_formulario = models.ForeignKey(Formulario, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        fila = "ID: " + self.id_formulario + " - " + "Nombre: " + self.nombre + " - " + "Descripcion: " + self.descripcion
+        return fila
 
 class Rol(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
+
+    def __str__(self):
+        fila = "Nombre: " + self.nombre + " - " + "Descripcion: " + self.descripcion
+        return fila
 
 class Rol_Permiso(models.Model):
     id_rol = models.ForeignKey(Rol, on_delete=models.CASCADE)

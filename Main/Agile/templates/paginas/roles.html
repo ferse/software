@@ -1,0 +1,38 @@
+{% extends 'App/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <a name="" id="" class="btn btn-success" href="#" role="button">Agregar nuevo Rol</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Roles</h4>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for Rol in roles %}
+                <tr>
+                    <td>{{ Rol.nombre }}</td>
+                    <td>{{ Rol.descripcion }}</td>
+                    <td>
+                        <a name="" id="" class="btn btn-info" href="#" role="button">Modificar</a>
+                        <a name="" id="" class="btn btn-danger" href="#" role="button">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
