@@ -1,0 +1,50 @@
+{% extends 'App/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <a name="" id="" class="btn btn-success" href="#" role="button">Agregar nuevo Usuario</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Usuarios</h4>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Alias</th>
+                    <th>Email</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>date_joined</th>
+                    <th>last_login</th>
+                    <th>is_admin</th>
+                    <th>is_active</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for Usuario in usuarios %}
+                <tr>
+                    <td>{{ Usuario.alias }}</td>
+                    <td>{{ Usuario.email }}</td>
+                    <td>{{ Usuario.nombre }}</td>
+                    <td>{{ Usuario.apellido }}</td>
+                    <td>{{ Usuario.date_joined }}</td>
+                    <td>{{ Usuario.last_login }}</td>
+                    <td>{{ Usuario.is_admin }}</td>
+                    <td>{{ Usuario.is_active }}</td>
+                    <td>
+                        <a name="" id="" class="btn btn-info" href="#" role="button">Modificar</a>
+                        <a name="" id="" class="btn btn-danger" href="#" role="button">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
