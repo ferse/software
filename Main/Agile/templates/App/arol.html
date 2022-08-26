@@ -1,0 +1,35 @@
+{% extends 'App/base.html' %}
+{% load static %}
+{% block content %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %} 
+        <p style="color:green">{{message}}</p>
+      {% endif %}
+      {% if message.tags == 'error' %} 
+        <p style="color:red">{{message}}</p>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  <a href="{% url 'crol' %}" style="margin-bottom: 20px; margin-left: 20px;" class="btn btn-primary">Añadir Rol</a>
+  <br>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Descripcion</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in rolex %}
+      <tr>
+        <th scope="row">{{u.nombre}}</th>
+        <td>{{u.descripcion}}</td>
+
+        <td><a href="mrol/{{u.nombre}}">Modificar</a> <a href="erol/{{u.nombre}}/baja">Eliminar</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
