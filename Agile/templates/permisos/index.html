@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <title>Index</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/Formulario.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/Permiso.css' %}" />
 </head>
 
 <body>
-    <form method="POST" class="post-form" action="/form">
+    <form method="POST" class="post-form" action="/perm">
         {% csrf_token %}
         <div class="container">
             <br>
@@ -20,15 +20,27 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Formulario Id:</label>
+                <label class="col-sm-2 col-form-label">Permisos Id:</label>
                 <div class="col-sm-4">
                     {{ form.id }}
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Descripcion Formualario:</label>
+                <label class="col-sm-2 col-form-label">Permisos name:</label>
                 <div class="col-sm-4">
-                    {{ form.fdescripcion }}
+                    {{ form.pname }}
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Permisos Descripcion:</label>
+                <div class="col-sm-4">
+                    {{ form.pdescripcion }}
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Formulario ID:</label>
+                <div class="col-sm-4">
+                    {{ form.fid }}
                 </div>
             </div>
             <div class="form-group row">

@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <title>Index</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/Formulario.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/Permiso.css' %}" />
 </head>
 
 <body>
-    <form method="POST" class="post-form" action="/update/{{formulario.id}}">
+    <form method="POST" class="post-form" action="/update/{{permiso.id}}">
         {% csrf_token %}
         <div class="container">
             <br>
@@ -20,16 +20,23 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Formulario Id:</label>
+                <label class="col-sm-2 col-form-label">PErmiso Id:</label>
                 <div class="col-sm-4">
-                    <input type="text" name="id" id="id_id" required maxlength="20" value="{{ formulario.id }}" />
+                    <input type="text" name="eid" id="id_id" required maxlength="20" value="{{ permiso.id }}" />
                 </div>
             </div>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Formulario Descripcion:</label>
+                <label class="col-sm-2 col-form-label">Permiso Name:</label>
                 <div class="col-sm-4">
-                    <input type="text" name="fdescripcion" id="id_fdescripcion" required maxlength="100"
-                        value="{{ formulario.fdescripcion }}" />
+                    <input type="text" name="fname" id="id_fname" required maxlength="100"
+                        value="{{ permiso.pname }}" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Permiso Decripcion:</label>
+                <div class="col-sm-4">
+                    <input type="text" name="pdescripcion" id="id_pdescripcion" required maxlength="254"
+                        value="{{ permiso.pdescripcion }}" />
                 </div>
             </div>
             <div class="form-group row">
