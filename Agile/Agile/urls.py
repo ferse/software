@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('App.urls')),
     path('',include('formulario.urls')),
+    path('',include('permisos.urls')),
 ]
