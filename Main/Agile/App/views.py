@@ -126,6 +126,44 @@ def busuario(request, alias, aux):
 def listar(request):
     users = Usuario.objects.all()
     return render(request,'App/a.html',{'users':users})
+def crol(request):
+    if request.method == 'POST':
+        nombre      = request.POST['nombre']
+        descripcion = request.POST['descripcion']
+        rol = Rol(nombre=nombre, descripcion=descripcion)
+        rol.save()
+        return redirect('home') 
+    return render(request,"App/crol.html")
+
+def buscarrol(nombre):
+    rol = Rol.objects.filter(nombre=nombre).first()
+    return rol
+
+def mrol(request, rol):
+
+    rol_edit= buscarrol(rol)
+    datos={
+        'nombre':rol_edit.nombre,
+        'descripcion':rol_edit.descripcion,
+    }
+    
+    if request.method == 'POST':
+        rol_edit.nombre      = request.POST['nombre']
+        rol_edit.descripcion = request.POST['descripcion']
+        rol_edit.save()
+        return redirect('home')            # deberia redireccionar al listado
+    return render(request,"App/mrol.html",datos)
+    
+def erol(request, rol, aux):
+    if aux == 'si':
+        roll = buscarrol(rol)
+        roll.delete()
+        return redirect('home')
+    return render(request,'App/erol.html',{'rol':rol})
+    
+def listarol(request):
+    rolex = Rol.objects.all()
+    return render(request,'App/arol.html',{'rolex':rolex})
 
 #Busca y retorna el usuario que recibe como parametro
 def buscar(alias):
