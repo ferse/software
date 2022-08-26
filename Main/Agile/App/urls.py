@@ -10,4 +10,8 @@ urlpatterns = [
     path('permisos', views.permisos, name='permisos'),
     path('roles', views.roles, name='roles'),
     path('salir', views.salir, name='salir'),
+    path('ausuario', views.ausuario, name='ausuario'),
+    path('musuario/<str:alias>', views.musuario, name='musuario'),
+    path('busuario/<str:alias>/<str:aux>', views.busuario, name='busuario'),
+    path('listar', views.listar, name='listar'),
 ]
