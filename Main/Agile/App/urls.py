@@ -13,5 +13,9 @@ urlpatterns = [
     path('ausuario', views.ausuario, name='ausuario'),
     path('musuario/<str:alias>', views.musuario, name='musuario'),
     path('busuario/<str:alias>/<str:aux>', views.busuario, name='busuario'),
+    path('crol', views.crol, name='crol'),
+    path('mrol/<str:rol>', views.mrol, name='mrol'),
+    path('erol/<str:rol>/<str:aux>', views.erol, name='erol'),
+    path('listarol', views.listarol, name='listarol'),
     path('listar', views.listar, name='listar'),
 ]
