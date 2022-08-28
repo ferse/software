@@ -17,5 +17,5 @@ urlpatterns = [
     path('mrol/<str:rol>', views.mrol, name='mrol'),
     path('erol/<str:rol>/<str:aux>', views.erol, name='erol'),
     path('listarol', views.listarol, name='listarol'),
-    path('listar', views.listar, name='listar'),
+    path('usurol/<str:alias>', views.usurol, name='usurol'),
 ]
