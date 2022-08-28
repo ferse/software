@@ -31,14 +31,15 @@ def logear(request):
             return redirect('logear')
     return render(request,"App/login.html")
 
+#Retorna todos los usuarios de la base de datos
 def usuarios(request):
     usuarios = Usuario.objects.all()
     return render(request, 'paginas/users.html', {'usuarios': usuarios})
-
+#Retorna todos los permisos de la base de datos
 def permisos(request):
     permisos = Permiso.objects.all()
     return render(request, 'paginas/permisos.html', {'permisos': permisos})
-
+#Retorna todos los roles de la base de datos
 def roles(request):
     roles = Rol.objects.all()
     return render(request, 'paginas/roles.html', {'roles': roles})
@@ -69,7 +70,7 @@ def ausuario(request):
             usu.set_password(contra1)
             usu.save()
             messages.success(request,'Usuario creado exitosamente')
-            return redirect('listar')
+            return redirect('users')
         else:
             messages.error(request,'Las contraseñas no coinciden')
             return redirect('ausuario')   
@@ -107,11 +108,11 @@ def musuario(request,alias):
         if cambio:
             usu.save()
             messages.success(request,'Modificacion exitosa')
-            return redirect('listar')
+            return redirect('users')
         #Sino vuelve a Consultar
         else:
             messages.error(request,'No se realizo ningun cambio')
-            return redirect('listar')
+            return redirect('users')
     return render(request,'App/musuario.html',datos)
 
 def busuario(request, alias, aux):
@@ -119,7 +120,7 @@ def busuario(request, alias, aux):
         usu = buscar(alias)
         usu.delete()
         messages.success(request,"Usuario eliminado exitosamente")
-        return redirect('listar')
+        return redirect('users')
     return render(request,'App/busuario.html',{'alias':alias})
 
 #Retorna todos los usarios de la base de datos
@@ -132,7 +133,7 @@ def crol(request):
         descripcion = request.POST['descripcion']
         rol = Rol(nombre=nombre, descripcion=descripcion)
         rol.save()
-        return redirect('home') 
+        return redirect('roles') 
     return render(request,"App/crol.html")
 
 def buscarrol(nombre):
@@ -151,14 +152,14 @@ def mrol(request, rol):
         rol_edit.nombre      = request.POST['nombre']
         rol_edit.descripcion = request.POST['descripcion']
         rol_edit.save()
-        return redirect('home')            # deberia redireccionar al listado
+        return redirect('roles')            
     return render(request,"App/mrol.html",datos)
     
 def erol(request, rol, aux):
     if aux == 'si':
         roll = buscarrol(rol)
         roll.delete()
-        return redirect('home')
+        return redirect('roles')
     return render(request,'App/erol.html',{'rol':rol})
     
 def listarol(request):
