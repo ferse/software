@@ -91,6 +91,9 @@ def musuario(request,alias):
     if request.method == 'POST':
         cambio = False
         #Verifica si se modifico algun campo del formulario
+        if request.POST['alias'] != usu.alias:
+            usu.alias = request.POST['alias']
+            cambio = True
         if request.POST['nombre'] != usu.nombre:
             usu.nombre = request.POST['nombre']
             cambio = True
@@ -111,11 +114,11 @@ def musuario(request,alias):
         #Su hubo cambios, los guarda en la base de datos
         if cambio:
             usu.save()
-            messages.success(request,'Modificacion exitosa')
+            #messages.success(request,'Modificacion exitosa')
             return redirect('users')
         #Sino vuelve a Consultar
         else:
-            messages.error(request,'No se realizo ningun cambio')
+            #messages.error(request,'No se realizo ningun cambio')
             return redirect('users')
     return render(request,'App/musuario.html',datos)
 
@@ -124,7 +127,7 @@ def busuario(request, alias, aux):
     if aux == 'si':
         usu = buscar(alias)
         usu.delete()
-        messages.success(request,"Usuario eliminado exitosamente")
+        #messages.success(request,"Usuario eliminado exitosamente")
         return redirect('users')
     return render(request,'App/busuario.html',{'alias':alias})
 
