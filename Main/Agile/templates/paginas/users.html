@@ -36,8 +36,9 @@
                     <td>{{ Usuario.is_admin }}</td>
                     <td>{{ Usuario.is_active }}</td>
                     <td>
-                        <a name="" id="" class="btn btn-info" href="musuario/{{Usuario.alias}}" role="button">Modificar</a>
-                        <a name="" id="" class="btn btn-danger" href="busuario/{{Usuario.alias}}/baja" role="button">Eliminar</a>
+                        <a name="" id="" class="btn btn-info" href="{% url 'musuario' Usuario.alias %}" role="button">Modificar</a>
+                        <a name="" id="" class="btn btn-warning" href="{% url 'usurol' Usuario.alias %}" role="button">Rol</a>
+                        <a name="" id="" class="btn btn-danger" href="{% url 'busuario' Usuario.alias 'baja' %}" role="button">Eliminar</a>
                     </td>
                 </tr>
                 {% endfor %}

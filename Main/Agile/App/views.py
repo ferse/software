@@ -1,9 +1,11 @@
+from subprocess import ABOVE_NORMAL_PRIORITY_CLASS
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from App.models import Usuario
 from django.conf import settings
-from .models import Usuario, Permiso, Rol
+from .models import Usuario, Permiso, Rol, Usuario_Rol
+from datetime import datetime, date
 
 # Create your views here.
 def home(request):
@@ -48,6 +50,7 @@ def salir(request):
     logout(request)
     return redirect('logear')
 
+#Crear Usuario
 def ausuario(request):
     if request.method == 'POST':
         alias = request.POST['alias']
@@ -73,9 +76,11 @@ def ausuario(request):
             return redirect('users')
         else:
             messages.error(request,'Las contraseñas no coinciden')
-            return redirect('ausuario')   
-    return render(request, 'App/ausuario.html')
+            return redirect('ausuario')  
+    roles = Rol.objects.all() 
+    return render(request, 'App/ausuario.html',{'roles': roles})
 
+#Modificar Usuario
 def musuario(request,alias):
     usu = buscar(alias)
     datos = {
@@ -87,6 +92,9 @@ def musuario(request,alias):
     if request.method == 'POST':
         cambio = False
         #Verifica si se modifico algun campo del formulario
+        if request.POST['alias'] != usu.alias:
+            usu.alias = request.POST['alias']
+            cambio = True
         if request.POST['nombre'] != usu.nombre:
             usu.nombre = request.POST['nombre']
             cambio = True
@@ -103,7 +111,7 @@ def musuario(request,alias):
                 cambio = True
             else:
                 messages.error(request,'Las contraseñas no coinciden')
-                return redirect('musuario')
+                return redirect('musuario',alias=alias)
         #Su hubo cambios, los guarda en la base de datos
         if cambio:
             usu.save()
@@ -111,22 +119,56 @@ def musuario(request,alias):
             return redirect('users')
         #Sino vuelve a Consultar
         else:
-            messages.error(request,'No se realizo ningun cambio')
+            #messages.error(request,'No se realizo ningun cambio')
             return redirect('users')
     return render(request,'App/musuario.html',datos)
 
+#Eliminar Usuario
 def busuario(request, alias, aux):
     if aux == 'si':
         usu = buscar(alias)
         usu.delete()
-        messages.success(request,"Usuario eliminado exitosamente")
+        #messages.success(request,"Usuario eliminado exitosamente")
         return redirect('users')
     return render(request,'App/busuario.html',{'alias':alias})
 
-#Retorna todos los usarios de la base de datos
-def listar(request):
-    users = Usuario.objects.all()
-    return render(request,'App/a.html',{'users':users})
+#Asignar Rol a Usuario
+def usurol(request,alias):
+    if request.method == 'POST':
+        #print(request.POST['roles'])  
+        if request.POST['roles'] != '0':
+            rol_nombre = request.POST['roles']
+            usu = buscar(alias)
+            desde = datetime.date(datetime.strptime(request.POST['desde'],'%Y-%m-%d'))
+            hasta = datetime.date(datetime.strptime(request.POST['hasta'],'%Y-%m-%d'))
+            #print(comprobar_fecha(usu, desde, hasta))
+            if hasta <= desde:
+                messages.error(request,'Fecha Hasta debe ser mayor a fecha Desde')
+                return redirect('usurol',alias=alias)
+            if comprobar_fecha(usu,desde,hasta):
+                rol = buscarrol(rol_nombre)
+                usu_rol = Usuario_Rol(id_usuario=usu, id_rol=rol, fecha_desde=desde, fecha_hasta=hasta)
+                usu_rol.save()
+                return redirect('users')
+            else:
+                messages.error(request,'El usuario ya tiene rol durante esas fechas')
+                return redirect('usurol',alias=alias)
+    roles = Rol.objects.all()
+    return render(request,'App/usurol.html',{'roles':roles,'alias':alias})
+
+#Comprueba que un usuario no tenga 2 roles en la misma fecha
+def comprobar_fecha(usu, desde, hasta):
+    roles = Usuario_Rol.objects.filter(id_usuario=usu)
+    for rol in roles:
+        #Si la fecha de inicio coincide con otro rol retorna Falso
+        if rol.fecha_desde <= desde <= rol.fecha_hasta:
+            return False
+        #Si la fecha de fin coincide con otro rol retorna Falso
+        if rol.fecha_desde <= hasta <= rol.fecha_hasta:
+            return False
+    #Si las fecha no coinciden con otro rol retorna True
+    return True
+
 def crol(request):
     if request.method == 'POST':
         nombre      = request.POST['nombre']
