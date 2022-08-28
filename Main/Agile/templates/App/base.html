@@ -152,47 +152,38 @@
           </li>
 
           <li class="nav-item nav-dropdown">
-            <a class="nav-link nav-dropdown-toggle" href="{% url 'users' %}"><i class="fa fa-user"></i> Usuario</a>
+            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-user"></i> Usuario</a>
             <ul class="nav-dropdown-items">
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Crear nuevo usuario</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Modificar usuario</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Eliminar usuario</a>
-              </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users' %}"><i class="fa fa-users ml-2"></i> Listar usuarios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ausuario' %}"><i class="fa fa-user-plus ml-2"></i> Crear nuevo usuario</a>
+                </li>
             </ul>
           </li>
 
           <li class="nav-item nav-dropdown">
-            <a class="nav-link nav-dropdown-toggle" href="{% url 'permisos' %}"><i class="fa fa-user"></i> Permisos</a>
+            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-user"></i> Permisos</a>
             <ul class="nav-dropdown-items">
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Crear nuevo Permiso</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Modificar Permiso</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Eliminar Permiso</a>
-              </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'permisos' %}"><i class="fa fa-users ml-2"></i> Listar permisos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Crear nuevo permiso</a>
+                </li>
             </ul>
           </li>
 
           <li class="nav-item nav-dropdown">
-            <a class="nav-link nav-dropdown-toggle" href="{% url 'roles' %}"><i class="fa fa-user"></i> Roles</a>
+            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-user"></i> Roles</a>
             <ul class="nav-dropdown-items">
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Crear nuevo rol</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Modificar rol</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Eliminar rol</a>
-              </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'roles' %}"><i class="fa fa-users ml-2"></i> Listar roles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'crol' %}"><i class="fa fa-user-plus ml-2"></i> Crear nuevo rol</a>
+                </li>
             </ul>
           </li>
           <li class="divider"></li>

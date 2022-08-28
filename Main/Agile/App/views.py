@@ -33,14 +33,15 @@ def logear(request):
             return redirect('logear')
     return render(request,"App/login.html")
 
+#Retorna todos los usuarios de la base de datos
 def usuarios(request):
     usuarios = Usuario.objects.all()
     return render(request, 'paginas/users.html', {'usuarios': usuarios})
-
+#Retorna todos los permisos de la base de datos
 def permisos(request):
     permisos = Permiso.objects.all()
     return render(request, 'paginas/permisos.html', {'permisos': permisos})
-
+#Retorna todos los roles de la base de datos
 def roles(request):
     roles = Rol.objects.all()
     return render(request, 'paginas/roles.html', {'roles': roles})
@@ -114,7 +115,7 @@ def musuario(request,alias):
         #Su hubo cambios, los guarda en la base de datos
         if cambio:
             usu.save()
-            #messages.success(request,'Modificacion exitosa')
+            messages.success(request,'Modificacion exitosa')
             return redirect('users')
         #Sino vuelve a Consultar
         else:
@@ -174,7 +175,7 @@ def crol(request):
         descripcion = request.POST['descripcion']
         rol = Rol(nombre=nombre, descripcion=descripcion)
         rol.save()
-        return redirect('home') 
+        return redirect('roles') 
     return render(request,"App/crol.html")
 
 def buscarrol(nombre):
@@ -193,14 +194,14 @@ def mrol(request, rol):
         rol_edit.nombre      = request.POST['nombre']
         rol_edit.descripcion = request.POST['descripcion']
         rol_edit.save()
-        return redirect('home')            # deberia redireccionar al listado
+        return redirect('roles')            
     return render(request,"App/mrol.html",datos)
     
 def erol(request, rol, aux):
     if aux == 'si':
         roll = buscarrol(rol)
         roll.delete()
-        return redirect('home')
+        return redirect('roles')
     return render(request,'App/erol.html',{'rol':rol})
     
 def listarol(request):
