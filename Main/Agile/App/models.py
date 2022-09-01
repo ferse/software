@@ -93,3 +93,35 @@ class Usuario_Rol(models.Model):
     id_rol = models.ForeignKey(Rol, on_delete=models.CASCADE)
     fecha_desde = models.DateField()
     fecha_hasta = models.DateField()
+
+class Estado_Proyecto(models.Model):
+    descripcion = models.CharField(max_length=100, verbose_name='descripcion')
+
+class Estado_Us(models.Model):
+    descripcion = models.CharField(max_length=100, verbose_name='descripcion')
+
+class Proyecto(models.Model):
+    nombre = models.CharField(max_length=50, verbose_name='nombre')
+    descripcion = models.CharField(max_length=100, verbose_name='descripcion')
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    id_estado = models.ForeignKey(Estado_Proyecto, on_delete=models.CASCADE)
+
+class Sprint(models.Model):
+    descripcion = models.CharField(max_length=100, verbose_name='descripcion')
+    duracion = models.IntegerField(verbose_name='duracion')
+    fecha_inicio = models.DateField(verbose_name='Fecha Inicio')
+    fecha_fin = models.DateField(verbose_name='Fecha Fin')
+
+class User_Story(models.Model):
+    nombre = models.CharField(max_length=50, verbose_name='nombre')
+    descripcion = models.CharField(max_length=100, verbose_name='descripcion')
+    fecha_creacion = models.DateField()
+    prioridad = models.IntegerField(verbose_name='Prioridad')
+    id_sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE)
+    id_estado = models.ForeignKey(Estado_Us, on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+
+class Backlog(models.Model):
+    id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    id_us = models.ForeignKey(User_Story, on_delete=models.CASCADE)
