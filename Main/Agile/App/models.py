@@ -118,9 +118,9 @@ class User_Story(models.Model):
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
     fecha_creacion = models.DateField()
     prioridad = models.IntegerField(verbose_name='Prioridad')
-    id_sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE)
+    id_sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE, null=True)
     id_estado = models.ForeignKey(Estado_Us, on_delete=models.CASCADE)
-    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True)
 
 class Backlog(models.Model):
     id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)

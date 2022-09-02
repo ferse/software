@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from App.models import Usuario
 from django.conf import settings
-from .models import Usuario, Permiso, Rol, Usuario_Rol
+from .models import Usuario, Permiso, Rol, Usuario_Rol, User_Story, Estado_Us
 from datetime import datetime, date
 
 # Create your views here.
@@ -212,3 +212,68 @@ def listarol(request):
 def buscar(alias):
     users = Usuario.objects.filter(alias=alias).first()
     return users
+
+#Crear User Story
+def aus(request):
+    if request.method == 'POST':
+        nombre = request.POST['nombre']
+        descripcion = request.POST['descripcion']
+        #La fecha de cracion carga automaticamente la fecha actual
+        fecha_creacion = datetime.today().strftime('%Y-%m-%d')
+        #Estado por defecto es TO DO
+        estado = Estado_Us.objects.filter(descripcion='To Do').first()
+        us = User_Story(
+            nombre = nombre,
+            descripcion = descripcion,
+            fecha_creacion = fecha_creacion,
+            #Prioridad por defecto es 0
+            prioridad = 0,
+            id_estado = estado
+            )
+        us.save()
+        messages.success(request,'User Story creado exitosamente')
+        return redirect('us')
+    return render(request,'App/aus.html')
+
+#Modificar User Story
+def mus(request,id_us):
+    us = buscar_us(id_us)
+    if request.method == 'POST':
+        cambio = False
+        if request.POST['nombre'] != us.nombre:
+            us.nombre = request.POST['nombre']
+            cambio = True
+        if request.POST['descripcion'] != us.descripcion:
+            us.descripcion = request.POST['descripcion']
+            cambio = True
+        if cambio:
+            us.save()
+            messages.success(request,'Modificacion exitosa')
+            return redirect('us')
+        #Sino vuelve a Consultar
+        else:
+            messages.error(request,'No se realizo ningun cambio')
+            return redirect('us')
+    return render(request,'App/mus.html',{'us':us})
+
+#Pagina para listar User Story
+def us(request):
+    us = listar_us
+    return render(request,'paginas/us.html',{'us':us})
+
+#Retorna todos los User Story de la base de datos
+def listar_us():
+    return User_Story.objects.all()
+
+#Retorna el User Story asociado al id que recibe
+def buscar_us(id_us):
+    return User_Story.objects.filter(id=id_us).first()
+
+#Eliminar/Baja User Story
+def bus(request, id_us, aux):
+    us = buscar_us(id_us)
+    if aux == 'si':
+        us.delete()
+        messages.success(request,"Usuario eliminado exitosamente")
+        return redirect('us')
+    return render(request,'App/bus.html',{'us':us})
