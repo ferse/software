@@ -18,4 +18,8 @@ urlpatterns = [
     path('erol/<str:rol>/<str:aux>', views.erol, name='erol'),
     path('listarol', views.listarol, name='listarol'),
     path('usurol/<str:alias>', views.usurol, name='usurol'),
+    path('us', views.us, name='us'),
+    path('aus', views.aus, name='aus'),
+    path('mus/<int:id_us>', views.mus, name='mus'),
+    path('bus/<int:id_us>/<str:aux>', views.bus, name='bus'),
 ]
