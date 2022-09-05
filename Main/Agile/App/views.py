@@ -1,10 +1,9 @@
-from subprocess import ABOVE_NORMAL_PRIORITY_CLASS
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from App.models import Usuario
 from django.conf import settings
-from .models import Usuario, Permiso, Rol, Usuario_Rol, User_Story, Estado_Us
+from .models import Rol_Permiso, Usuario, Permiso, Rol, Usuario_Rol, User_Story, Estado_Us, Proyecto
 from datetime import datetime, date
 
 # Create your views here.
@@ -62,12 +61,6 @@ def ausuario(request):
         if Usuario.objects.filter(alias=alias):
             messages.error(request,'El usuario "' + alias + '" ya existe')
             return redirect('ausuario')
-        #print(alias)
-        #print(nombre)
-        #print(apellido)
-        #print(email)
-        #print(contra1)
-        #print(contra2)
         if contra1 == contra2:
             usu = Usuario.objects.create_user(email, alias, nombre, apellido)
             usu.set_password(contra1)
@@ -169,22 +162,30 @@ def comprobar_fecha(usu, desde, hasta):
     #Si las fecha no coinciden con otro rol retorna True
     return True
 
+#Crear Rol
 def crol(request):
+    permisos = listar_permisos()
     if request.method == 'POST':
         nombre      = request.POST['nombre']
         descripcion = request.POST['descripcion']
         rol = Rol(nombre=nombre, descripcion=descripcion)
         rol.save()
+        for id_permiso in request.POST.getlist('permiso'):
+            permiso = buscar_permiso(id_permiso)
+            if buscar_rol_permiso(rol,permiso) is None:
+                rol_permiso = Rol_Permiso(id_rol=rol,id_permiso=permiso)
+                rol_permiso.save()
         return redirect('roles') 
-    return render(request,"App/crol.html")
+    return render(request,"App/crol.html",{'permisos':permisos})
 
-def buscarrol(nombre):
-    rol = Rol.objects.filter(nombre=nombre).first()
+def buscarrol(id):
+    rol = Rol.objects.filter(id=id).first()
     return rol
 
 def mrol(request, rol):
-
+    permisos = listar_permisos()
     rol_edit= buscarrol(rol)
+    permisos_rol = listar_permisos_rol(rol_edit)
     datos={
         'nombre':rol_edit.nombre,
         'descripcion':rol_edit.descripcion,
@@ -194,8 +195,14 @@ def mrol(request, rol):
         rol_edit.nombre      = request.POST['nombre']
         rol_edit.descripcion = request.POST['descripcion']
         rol_edit.save()
+        eliminar_permisos(rol_edit)
+        for id_permiso in request.POST.getlist('permiso'):
+            permiso = buscar_permiso(id_permiso)
+            if buscar_rol_permiso(rol_edit,permiso) is None:
+                rol_permiso = Rol_Permiso(id_rol=rol_edit,id_permiso=permiso)
+                rol_permiso.save()
         return redirect('roles')            
-    return render(request,"App/mrol.html",datos)
+    return render(request,"App/mrol.html",{'datos':datos,'permisos':permisos,'permisos_rol':permisos_rol})
     
 def erol(request, rol, aux):
     if aux == 'si':
@@ -203,10 +210,6 @@ def erol(request, rol, aux):
         roll.delete()
         return redirect('roles')
     return render(request,'App/erol.html',{'rol':rol})
-    
-def listarol(request):
-    rolex = Rol.objects.all()
-    return render(request,'App/arol.html',{'rolex':rolex})
 
 #Busca y retorna el usuario que recibe como parametro
 def buscar(alias):
@@ -274,6 +277,50 @@ def bus(request, id_us, aux):
     us = buscar_us(id_us)
     if aux == 'si':
         us.delete()
-        messages.success(request,"Usuario eliminado exitosamente")
+        messages.success(request,"User Story  eliminado exitosamente")
         return redirect('us')
     return render(request,'App/bus.html',{'us':us})
+
+#Busca si un proyecto ya tiene backlog
+def proyecto_backlog(id_proyecto):
+    return
+
+#Añadir Backlog
+def abacklog(request):
+    proyectos = listar_proyectos()
+    if request.method == 'POST':
+        return
+        #Ver si el proyecto ya tiene backlog
+        #Sino crear
+        #Ver como añadir los US
+    return render(request,'App/abacklog.html',{'proyectos':proyectos})
+
+#Obtener permisos
+def listar_permisos():
+    return Permiso.objects.all()
+
+#Retorna el permiso con el id que recibe
+def buscar_permiso(id_permiso):
+    return Permiso.objects.filter(id=id_permiso).first()
+
+#Retorna los Rermisos que tiene el Rol que recibe
+def listar_permisos_rol(id_rol):
+    aux = Rol_Permiso.objects.filter(id_rol=id_rol)
+    perm = set()
+    for x in aux:
+        perm.add(x.perm())
+    return perm
+
+#Retorna el Rol y el Permiso si tiene asignado
+def buscar_rol_permiso(id_rol,permiso):
+    return Rol_Permiso.objects.filter(id_rol = id_rol, id_permiso = permiso).first()
+
+#Retorna todos los Proyectos de la base de datos
+def listar_proyectos():
+    return Proyecto.objects.all()
+
+#Elimina todos los permisos de un rol
+def eliminar_permisos(rol_edit):
+    aux = Rol_Permiso.objects.filter(id_rol=rol_edit).all()
+    for a in aux:
+        a.delete()
