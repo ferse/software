@@ -29,7 +29,7 @@
                     <td>{{ Proyecto.fecha_fin }}</td>
                     <td>
                         <a name="" id="" class="btn btn-info" href="mproy/{{Proyecto.nombre}}" role="button">Modificar</a>
-                        <a name="" id="" class="btn btn-danger" href="#" role="button">Eliminar</a>
+                        <a name="" id="" class="btn btn-danger" href="{% url 'eproy' Proyecto.nombre 'baja' %}" role="button">Eliminar</a>
                     </td>
                 </tr>
                 {% endfor %}

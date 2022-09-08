@@ -329,3 +329,12 @@ def mproy(request, proyecto):
         proy_edit.save()
         return redirect('proyectos')           
     return render(request,"proyectos/editar.html",datos)
+
+#Eliminar proyecto
+def eproy(request, nombre, aux):
+    if aux == 'si':
+        proy = buscarproy(nombre)
+        proy.delete()
+        #messages.success(request,"Proyecto eliminado exitosamente")
+        return redirect('proyectos')
+    return render(request,'proyectos/eliminar.html',{'nombre':nombre})

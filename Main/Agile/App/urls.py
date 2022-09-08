@@ -25,4 +25,5 @@ urlpatterns = [
     path('proyectos', views.proyectos, name='proyectos'),
     path('aproyecto', views.aproyecto, name='aproyecto'),
     path('mproy/<str:proyecto>', views.mproy, name='mproy'),
+    path('eproy/<str:nombre>/<str:aux>', views.eproy, name='eproy'),
 ]
