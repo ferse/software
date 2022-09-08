@@ -136,9 +136,10 @@
           <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-puzzle-piece"></i> Proyecto</a>
             <ul class="nav-dropdown-items">
-              <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-plus ml-2"></i> Nuevo Proyecto</a>
-              </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'proyectos' %}"><i class="fa fa-list ml-2"></i> Listar Proyectos</a>
+                    <a class="nav-link" href="{% url 'aproyecto' %}"><i class="fa fa-plus ml-2"></i> Nuevo Proyecto</a>
+                </li>
             </ul>
           </li>
 

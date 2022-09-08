@@ -106,6 +106,11 @@ class Proyecto(models.Model):
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     id_estado = models.ForeignKey(Estado_Proyecto, on_delete=models.CASCADE)
+    #id_usuario_rol = models.ForeignKey(Usuario_Rol, on_delete=models.CASCADE)
+
+    def __str__(self):
+        fila = "Proyecto: " + self.nombre + " - " + "Descripcion: " + self.descripcion + " - " + "Fecha inicio: " + self.fecha_inicio + " - " + "Fecha fin: " + self.fecha_fin 
+        return fila
 
 class Sprint(models.Model):
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')

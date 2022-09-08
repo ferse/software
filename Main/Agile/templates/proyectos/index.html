@@ -1,0 +1,42 @@
+{% extends 'App/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <a name="" id="" class="btn btn-success" href="{% url 'aproyecto' %}" role="button">Agregar nuevo Proyecto</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Proyectos</h4>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for Proyecto in proyectos %}
+                <tr>
+                    <td>{{ Proyecto.nombre }}</td>
+                    <td>{{ Proyecto.descripcion }}</td>
+                    <td>{{ Proyecto.fecha_inicio }}</td>
+                    <td>{{ Proyecto.fecha_fin }}</td>
+                    <td>
+                        <a name="" id="" class="btn btn-info" href="mproy/{{Proyecto.nombre}}" role="button">Modificar</a>
+                        <a name="" id="" class="btn btn-danger" href="#" role="button">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
