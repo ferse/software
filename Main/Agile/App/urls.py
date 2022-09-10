@@ -21,5 +21,9 @@ urlpatterns = [
     path('aus', views.aus, name='aus'),
     path('mus/<int:id_us>', views.mus, name='mus'),
     path('bus/<int:id_us>/<str:aux>', views.bus, name='bus'),
+    path('proyectos', views.proyectos, name='proyectos'),
+    path('aproyecto', views.aproyecto, name='aproyecto'),
+    path('mproy/<str:proyecto>', views.mproy, name='mproy'),
+    path('eproy/<str:nombre>/<str:aux>', views.eproy, name='eproy'),
     path('abacklog', views.abacklog, name='abacklog'),
 ]

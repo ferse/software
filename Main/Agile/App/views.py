@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from App.models import Usuario
 from django.conf import settings
-from .models import Rol_Permiso, Usuario, Permiso, Rol, Usuario_Rol, User_Story, Estado_Us, Proyecto
+from .models import Usuario, Permiso, Rol, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
 from datetime import datetime, date
 
 # Create your views here.
@@ -324,3 +324,63 @@ def eliminar_permisos(rol_edit):
     aux = Rol_Permiso.objects.filter(id_rol=rol_edit).all()
     for a in aux:
         a.delete()
+#Retorna todos los proyectos de la base de datos
+def proyectos(request):
+    proyectos = Proyecto.objects.all()
+    return render(request, 'proyectos/index.html', {'proyectos': proyectos})
+
+#Crear Proyecto
+def aproyecto(request):
+    if request.method == 'POST':
+        nombre = request.POST['nombre']
+        descripcion = request.POST['descripcion']
+        fecha_inicio = datetime.date(datetime.strptime(request.POST['fecha_inicio'],'%Y-%m-%d'))
+        fecha_fin = datetime.date(datetime.strptime(request.POST['fecha_fin'],'%Y-%m-%d'))
+        #Estado por defecto es TO DO
+        estado = Estado_Proyecto.objects.filter(descripcion='To Do').first()
+        #usuario = request.POST['usuario']     
+        if fecha_fin <= fecha_inicio:
+            messages.error(request,'Fecha fin debe ser mayor a fecha de inicio')
+            return redirect('proyectos')
+        proy = Proyecto(
+            nombre=nombre, 
+            descripcion=descripcion, 
+            fecha_inicio=fecha_inicio, 
+            fecha_fin=fecha_fin,
+            id_estado = estado
+            #id_usuario_rol = usuario    # falta agregar usuario a un proyecto
+            )
+        proy.save()
+        return redirect('proyectos') 
+    return render(request,"proyectos/crear.html")
+
+def buscarproy(nombre):
+    proy = Proyecto.objects.filter(nombre=nombre).first()
+    return proy
+
+# Modificar proyectos
+def mproy(request, proyecto):
+    proy_edit= buscarproy(proyecto)
+    datos={
+        'nombre':proy_edit.nombre,
+        'descripcion':proy_edit.descripcion,
+        'fecha_inicio':proy_edit.fecha_inicio,
+        'fecha_fin':proy_edit.fecha_fin,
+    }
+    if request.method == 'POST':
+        proy_edit.nombre = request.POST['nombre']
+        proy_edit.descripcion = request.POST['descripcion']
+        proy_edit.fecha_inicio = datetime.date(datetime.strptime(request.POST['fecha_inicio'],'%Y-%m-%d'))
+        proy_edit.fecha_fin = datetime.date(datetime.strptime(request.POST['fecha_fin'],'%Y-%m-%d'))       
+        proy_edit.save()
+        return redirect('proyectos')           
+    return render(request,"proyectos/editar.html",datos)
+
+#Eliminar proyecto
+def eproy(request, nombre, aux):
+    if aux == 'si':
+        proy = buscarproy(nombre)
+        proy.delete()
+        #messages.success(request,"Proyecto eliminado exitosamente")
+        return redirect('proyectos')
+    return render(request,'proyectos/eliminar.html',{'nombre':nombre})
