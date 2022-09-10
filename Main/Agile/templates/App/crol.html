@@ -1,7 +1,5 @@
 {% extends 'App/base.html' %}
 {% load static %}
-
-
 {% block content %}
 <div class="container-fluid">
   <div id="ui-view" style="opacity: 1;">
@@ -17,12 +15,12 @@
              <form action="crol" method="post" style="margin-left: 300px;">
                 {% csrf_token %}
                 {% if messages %}
-                    {% for message in messages %}
-                      {% if message.tags == 'error' %} 
-                        <p style="color:red">{{message}}</p>
-                      {% endif %}
-                    {% endfor %}
-                  {% endif %}
+                  {% for message in messages %}
+                    {% if message.tags == 'error' %} 
+                      <p style="color:red">{{message}}</p>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
                 <div class="form-group col-md-7">
                   <label for="formGroupExampleInput">Nombre:</label>
                   <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -31,11 +29,19 @@
                   <label for="formGroupExampleInput">Descripcion:</label>
                   <input type="text" class="form-control" id="descripcion" name="descripcion" required>
                 </div>
-                
+                <div class="form-group">
+                  <label for="formGroupExampleInput">Permisos:</label>
+                  <fieldset id="opciones">
+                    {% for permiso in permisos %}
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="permiso" value="{{permiso.id}}">
+                        <label class="form-check-label" for="flexCheckDefault">{{permiso.nombre}}</label>
+                      </div>                 
+                    {% endfor %}
+                  </fieldset>
+                </div>
                 <button type="submit" style="margin-left: 150px;" class="btn btn-primary">Crear Rol</button>
               </form>
-			 
-			 
             </div>
           </div>
         </div>
@@ -43,5 +49,4 @@
     </div>
   </div>
 </div>
-
 {% endblock %}

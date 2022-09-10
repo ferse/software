@@ -73,7 +73,7 @@ class Permiso(models.Model):
     id_formulario = models.ForeignKey(Formulario, on_delete=models.CASCADE)
     
     def __str__(self):
-        fila = "ID: " + self.id_formulario + " - " + "Nombre: " + self.nombre + " - " + "Descripcion: " + self.descripcion
+        fila = "ID: " + str(self.id_formulario) + " - " + "Nombre: " + self.nombre + " - " + "Descripcion: " + self.descripcion
         return fila
 
 class Rol(models.Model):
@@ -87,6 +87,9 @@ class Rol(models.Model):
 class Rol_Permiso(models.Model):
     id_rol = models.ForeignKey(Rol, on_delete=models.CASCADE)
     id_permiso = models.ForeignKey(Permiso, on_delete=models.CASCADE)
+
+    def perm(self):
+        return self.id_permiso.id
 
 class Usuario_Rol(models.Model):
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -123,6 +126,7 @@ class User_Story(models.Model):
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
     fecha_creacion = models.DateField()
     prioridad = models.IntegerField(verbose_name='Prioridad')
+    comentario = models.TextField(verbose_name='Comentario', null=True)
     id_sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE, null=True)
     id_estado = models.ForeignKey(Estado_Us, on_delete=models.CASCADE)
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True)
