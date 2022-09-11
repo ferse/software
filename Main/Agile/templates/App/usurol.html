@@ -30,7 +30,7 @@
                   <select class="form-select" name="roles" id="roles">
                     <option value="0" selected>Seleccione un rol</option>
                     {% for rol in roles %}
-                      <option value="{{rol.nombre}}">{{rol.nombre}}</option>
+                      <option value="{{rol.id}}">{{rol.nombre}}</option>
                     {% endfor %}
                   </select>
                 </div>
@@ -44,7 +44,25 @@
                 </div>
                 <a href="{% url 'users' %}" style="margin-left: 70px;" class="btn btn-link">Cancelar</a>
                 <button type="submit" style="margin-left: 80px;" class="btn btn-primary">Asignar Rol</button>
-              </form>
+              </form><br>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Rol</th>
+                    <th>Desde</th>
+                    <th>Hasta</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for rol in usurol %}
+                    <tr>
+                      <th>{{rol.id_rol.nombre}}</th>
+                      <th>{{rol.fecha_desde}}</th>
+                      <th>{{rol.fecha_hasta}}</th>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
