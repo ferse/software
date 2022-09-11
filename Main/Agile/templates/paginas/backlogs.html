@@ -1,0 +1,29 @@
+{% extends 'App/base.html' %}
+{% load static %}
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <i class="fa fa-align-justify"></i> Backlogs
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Proyecto</th>
+                    <th>Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for proyecto in proyectos %}
+                <tr>
+                    <td>{{proyecto.nombre}}</td>
+                    <td>
+                        <a name="" id="" class="btn btn-info" href="backlog/{{proyecto.id}}" role="button">Abrir Backlog</a> 
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

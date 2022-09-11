@@ -142,12 +142,20 @@
                 </li>
             </ul>
           </li>
-
+          <li class="nav-item nav-dropdown">
+            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-puzzle-piece"></i> User Story</a>
+            <ul class="nav-dropdown-items">
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'us' %}"><i class="fa fa-list ml-2"></i> Listar User Story</a>
+                  <a class="nav-link" href="{% url 'aus' %}"><i class="fa fa-plus ml-2"></i> Nuevo User Story</a>
+                </li>
+            </ul>
+          </li>
           <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-puzzle-piece"></i> Backlog</a>
             <ul class="nav-dropdown-items">
               <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-plus ml-2"></i> Nuevo Backlog</a>
+                <a class="nav-link" href="{% url 'backlogs' %}"><i class="fa fa-list ml-2"></i> Listar Backlogs</a>
               </li>
             </ul>
           </li>
@@ -156,22 +164,22 @@
             <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-user"></i> Usuario</a>
             <ul class="nav-dropdown-items">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'users' %}"><i class="fa fa-users ml-2"></i> Listar usuarios</a>
+                    <a class="nav-link" href="{% url 'users' %}"><i class="fa fa-users ml-2"></i> Listar Usuarios</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ausuario' %}"><i class="fa fa-user-plus ml-2"></i> Crear nuevo usuario</a>
+                    <a class="nav-link" href="{% url 'ausuario' %}"><i class="fa fa-user-plus ml-2"></i> Crear Usuario</a>
                 </li>
             </ul>
           </li>
 
           <li class="nav-item nav-dropdown">
-            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-user"></i> Permisos</a>
+            <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-key"></i> Permisos</a>
             <ul class="nav-dropdown-items">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'permisos' %}"><i class="fa fa-users ml-2"></i> Listar permisos</a>
+                    <a class="nav-link" href="{% url 'permisos' %}"><i class="fa fa-list ml-2"></i> Listar Permisos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fa fa-user-plus ml-2"></i> Crear nuevo permiso</a>
+                    <a class="nav-link" href="#"><i class="fa fa-plus ml-2"></i> Crear Permiso</a>
                 </li>
             </ul>
           </li>
@@ -180,10 +188,10 @@
             <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-user"></i> Roles</a>
             <ul class="nav-dropdown-items">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'roles' %}"><i class="fa fa-users ml-2"></i> Listar roles</a>
+                    <a class="nav-link" href="{% url 'roles' %}"><i class="fa fa-users ml-2"></i> Listar Roles</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'crol' %}"><i class="fa fa-user-plus ml-2"></i> Crear nuevo rol</a>
+                    <a class="nav-link" href="{% url 'crol' %}"><i class="fa fa-user-plus ml-2"></i> Crear Rol</a>
                 </li>
             </ul>
           </li>
