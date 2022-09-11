@@ -413,5 +413,8 @@ def eproy(request, nombre, aux):
     return render(request,'proyectos/eliminar.html',{'nombre':nombre})
 
 def backlogs(request):
-    proyectos = Proyecto.objects.all()
+    backlogs = Backlog.objects.values('id_proyecto').distinct()
+    proyectos = []
+    for b in backlogs:
+        proyectos.append(buscar_proyecto(b['id_proyecto']))
     return render(request,'paginas/backlogs.html',{'proyectos':proyectos})
