@@ -1,3 +1,5 @@
+from email.policy import default
+from io import open_code
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 # Create your models here.
@@ -109,11 +111,14 @@ class Proyecto(models.Model):
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     id_estado = models.ForeignKey(Estado_Proyecto, on_delete=models.CASCADE)
-    #id_usuario_rol = models.ForeignKey(Usuario_Rol, on_delete=models.CASCADE)
 
     def __str__(self):
         fila = "Proyecto: " + self.nombre + " - " + "Descripcion: " + self.descripcion + " - " + "Fecha inicio: " + self.fecha_inicio + " - " + "Fecha fin: " + self.fecha_fin 
         return fila
+
+class Usuario_Proyecto(models.Model):
+    id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
 
 class Sprint(models.Model):
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
@@ -126,11 +131,17 @@ class User_Story(models.Model):
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
     fecha_creacion = models.DateField()
     prioridad = models.IntegerField(verbose_name='Prioridad')
-    comentario = models.TextField(verbose_name='Comentario', null=True)
     id_sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE, null=True)
     id_estado = models.ForeignKey(Estado_Us, on_delete=models.CASCADE)
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True)
 
+class Comentario_Us(models.Model):
+    comentario = models.TextField(verbose_name='Comentario')
+    id_user_story = models.ForeignKey(User_Story, on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    fecha = models.DateField(auto_now=True)
+
 class Backlog(models.Model):
     id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    id_sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE, null=True)
     id_us = models.ForeignKey(User_Story, on_delete=models.CASCADE)

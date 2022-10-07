@@ -1,0 +1,55 @@
+{% extends 'App/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+  <div id="ui-view" style="opacity: 1;">
+    <div class="animated fadeIn">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+                <h1 class="display-4">{{proyecto.nombre}}</h1>
+                <p class="lead">{{proyecto.descripcion}}</p>            
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Integrantes <a class="btn btn-primary" style="float: right;" href="{% url 'miembro' proyecto.id %}">Editar</a></h1> 
+                {% if integrantes %}
+                    <ul>
+                        {% for integrante in integrantes %}
+                            <li>{{integrante.id_usuario.nombre}} {{integrante.id_usuario.apellido}}</li>
+                        {% endfor %}
+                    </ul>      
+                {% else %}      
+                    <center><p>El proyecto no tiene integrantes</p></center>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+              <div class="card-body">
+                  <h1 class="card-title">Backlog <a class="btn btn-primary" style="float: right;" href="{% url 'backlog' proyecto.id %}">Editar</a></h1> 
+                  {% if backlog %}
+                      <ul>
+                          {% for us in backlog %}
+                              <li>{{us.id_us.nombre}}</li>
+                          {% endfor %}
+                      </ul>      
+                  {% else %}      
+                      <center><p>El proyecto no tiene User Story</p></center>
+                  {% endif %}
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

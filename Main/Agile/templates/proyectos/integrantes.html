@@ -1,0 +1,59 @@
+{% extends 'App/base.html' %}
+{% load static %}
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div class="card-header">
+            <form action="" method="post">
+              {% csrf_token %}
+              <select class="form-select" name="integrante" id="integrante">
+                <option value="0" selected>Añadir Integrante: </option>
+                {% for usuario in usuarios %}
+                  <option value="{{usuario.id}}">{{usuario.nombre}} {{usuario.apellido}}</option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-success">Añadir</button>
+            </form>
+          </div>   
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Integrantes</h4>
+        {% if messages %}
+                {% for message in messages %}
+                  {% if message.tags == 'error' %} 
+                    <p style="color:red">{{message}}</p>
+                  {% endif %}
+                  {% if message.tags == 'success' %} 
+                    <p style="color:green">{{message}}</p>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for miembro in miembros %}
+                <tr>
+                    <td>{{ miembro.id_usuario.alias }}</td>
+                    <td>{{ miembro.id_usuario.email }}</td>
+                    <td>{{ miembro.id_usuario.nombre }}</td>
+                    <td>{{ miembro.id_usuario.apellido }}</td>
+                    <td>
+                        <a name="" id="" class="btn btn-danger" href="{% url 'bmiembro' id_proyecto=proyecto.id id_usuario=miembro.id_usuario.id %}" role="button">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
