@@ -5,7 +5,7 @@
 
 <div class="card">
     <div class="card-header">
-        <a name="" id="" class="btn btn-success" href="{% url 'aproyecto' %}" role="button">Agregar nuevo Proyecto</a>
+        
     </div>
     <div class="card-body">
         <h4 class="card-title">Proyectos</h4>
@@ -29,6 +29,7 @@
                     <td>{{ Proyecto.fecha_fin }}</td>
                     <td>
                         <a name="" id="" class="btn btn-info" href="mproy/{{Proyecto.nombre}}" role="button">Modificar</a>
+                        <a name="" id="" class="btn btn-primary" href="backlog/{{Proyecto.id}}" role="button">Backlog</a>
                         <a name="" id="" class="btn btn-danger" href="{% url 'eproy' Proyecto.nombre 'baja' %}" role="button">Eliminar</a>
                     </td>
                 </tr>

@@ -16,7 +16,6 @@ urlpatterns = [
     path('crol', views.crol, name='crol'),
     path('mrol/<str:rol>', views.mrol, name='mrol'),
     path('erol/<str:rol>/<str:aux>', views.erol, name='erol'),
-    path('listarol', views.listarol, name='listarol'),
     path('usurol/<str:alias>', views.usurol, name='usurol'),
     path('us', views.us, name='us'),
     path('aus', views.aus, name='aus'),
@@ -26,4 +25,7 @@ urlpatterns = [
     path('aproyecto', views.aproyecto, name='aproyecto'),
     path('mproy/<str:proyecto>', views.mproy, name='mproy'),
     path('eproy/<str:nombre>/<str:aux>', views.eproy, name='eproy'),
+    path('backlog/<int:id_proyecto>', views.backlog, name='backlog'),
+    path('backlogs', views.backlogs, name='backlogs'),
+    path('eus/<int:id_proyecto>/<int:id_us>/<str:aux>', views.eus, name='eus'),
 ]
