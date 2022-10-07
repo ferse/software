@@ -1,0 +1,43 @@
+{% extends 'App/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+  <div id="ui-view" style="opacity: 1;">
+    <div class="animated fadeIn">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+                <h1 class="display-4">{{us.nombre}}</h1>
+                <p class="lead">{{us.descripcion}}</p>            
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Comentarios</h4> 
+            </div>
+            <div class="card-body">
+                {% if comentarios %}                   
+                    {% for comentario in comentarios %}
+                        <div class="card">
+                            <div class="card-body">
+                                <p><strong>Usuario: {{comentario.id_usuario.nombre}} {{comentario.id_usuario.apellido}} - 
+                                Fecha: {{comentario.fecha}}</strong></p>
+                                <p class="card-text" style="text-align: justify;" >{{comentario.comentario}}</p>                                
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}      
+                    <center><p>No hay comentarios</p></center>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
