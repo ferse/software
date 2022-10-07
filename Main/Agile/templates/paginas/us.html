@@ -11,33 +11,39 @@
       {% endif %}
     {% endfor %}
   {% endif %}
-  <a href="{% url 'aus' %}" style="margin-bottom: 20px; margin-left: 20px;" class="btn btn-primary">Crear User Story</a>
-  <br>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Nombre</th>
-        <th scope="col">Descripcion</th>
-        <th scope="col">Prioridad</th>
-        <th scope="col">Sprint</th>
-        <th scope="col">Estado</th>
-        <th scope="col">Usuario</th>
-        <th scope="col">Fecha Creacion</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for u in us %}
-      <tr>
-        <th scope="row">{{u.nombre}}</th>
-        <td>{{u.descripcion}}</td>
-        <td>{{u.prioridad}}</td>
-        <td>{{u.id_sprint}}</td>
-        <td>{{u.id_estado.descripcion}}</td>
-        <td>{{u.id_usuario}}</td>
-        <td>{{u.fecha_creacion}}</td>
-        <td><a href="mus/{{u.id}}">Modificar</a> <a href="bus/{{u.id}}/baja">Eliminar</a></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="card">
+    <div class="card-header">
+      <a href="{% url 'aus' %}" class="btn btn-primary" >Crear User Story</a>
+    </div>
+    <div class="card-body">
+      <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">Descripcion</th>
+          <th scope="col">Prioridad</th>
+          <th scope="col">Sprint</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Usuario</th>
+          <th scope="col">Fecha Creacion</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in us %}
+          <tr>
+            <th scope="row"><a class="text-dark" href="{% url 'userstory' u.id %}">{{u.nombre}}</a></th>
+            <td>{{u.descripcion}}</td>
+            <td>{{u.prioridad}}</td>
+            <td>{{u.id_sprint}}</td>
+            <td>{{u.id_estado.descripcion}}</td>
+            <td>{{u.id_usuario.nombre}} {{u.id_usuario.apellido}}</td>
+            <td>{{u.fecha_creacion}}</td>
+            <td><a class="btn btn-info" href="mus/{{u.id}}">Modificar</a><a class="btn btn-danger" href="bus/{{u.id}}/baja">Eliminar</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}

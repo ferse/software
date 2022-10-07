@@ -1,15 +1,12 @@
 {% extends 'App/base.html' %}
 {% load static %}
-
 {% block content %}
-
 <div class="card">
     <div class="card-header">
         
     </div>
     <div class="card-body">
         <h4 class="card-title">Proyectos</h4>
-
         <table class="table">
             <thead>
                 <tr>
@@ -23,7 +20,7 @@
             <tbody>
                 {% for Proyecto in proyectos %}
                 <tr>
-                    <td>{{ Proyecto.nombre }}</td>
+                    <th scope="row"><a class="text-dark" href="{% url 'proyecto' Proyecto.id %}">{{ Proyecto.nombre }}</a></th>
                     <td>{{ Proyecto.descripcion }}</td>
                     <td>{{ Proyecto.fecha_inicio }}</td>
                     <td>{{ Proyecto.fecha_fin }}</td>
@@ -36,8 +33,6 @@
                 {% endfor %}
             </tbody>
         </table>
-
     </div>
 </div>
-
 {% endblock %}

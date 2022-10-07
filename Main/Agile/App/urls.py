@@ -28,4 +28,9 @@ urlpatterns = [
     path('backlog/<int:id_proyecto>', views.backlog, name='backlog'),
     path('backlogs', views.backlogs, name='backlogs'),
     path('eus/<int:id_proyecto>/<int:id_us>/<str:aux>', views.eus, name='eus'),
+    path('kanban', views.kanban, name='kanban'),
+    path('proyecto/<int:id>', views.proyecto, name='proyecto'),
+    path('miembro/<int:id>', views.miembro, name='miembro'),
+    path('bmiembro/<int:id_proyecto>/<int:id_usuario>', views.bmiembro, name='bmiembro'),
+    path('userstory/<int:id_us>', views.userstory, name='userstory'),
 ]

@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from App.models import Usuario
 from django.conf import settings
-from .models import Backlog, Usuario, Permiso, Rol, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
+from .models import Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
 from datetime import datetime, date
 
 # Create your views here.
@@ -71,7 +71,7 @@ def ausuario(request):
             messages.error(request,'Las contraseñas no coinciden')
             return redirect('ausuario')  
     roles = Rol.objects.all() 
-    return render(request, 'App/ausuario.html',{'roles': roles})
+    return render(request, 'usuarios/crear.html',{'roles': roles})
 
 #Modificar Usuario
 def musuario(request,alias):
@@ -114,7 +114,7 @@ def musuario(request,alias):
         else:
             #messages.error(request,'No se realizo ningun cambio')
             return redirect('users')
-    return render(request,'App/musuario.html',datos)
+    return render(request,'usuarios/modificar.html',datos)
 
 #Eliminar Usuario
 def busuario(request, alias, aux):
@@ -123,7 +123,7 @@ def busuario(request, alias, aux):
         usu.delete()
         #messages.success(request,"Usuario eliminado exitosamente")
         return redirect('users')
-    return render(request,'App/busuario.html',{'alias':alias})
+    return render(request,'usuarios/eliminar.html',{'alias':alias})
 
 #Asignar Rol a Usuario
 def usurol(request,alias):
@@ -285,7 +285,7 @@ def backlog(request,id_proyecto):
     proyecto = buscar_proyecto(id_proyecto)
     us_backlog = listar_us_backlog(proyecto)
     if request.method == 'POST':
-        if request.POST['us'] != 0:
+        if request.POST['us'] != '0':
             us = buscar_us(request.POST['us'])
             if buscar_us_backlog(us,proyecto) is None:
                 backlog = Backlog(id_proyecto=proyecto,id_us=us)
@@ -418,3 +418,87 @@ def backlogs(request):
     for b in backlogs:
         proyectos.append(buscar_proyecto(b['id_proyecto']))
     return render(request,'paginas/backlogs.html',{'proyectos':proyectos})
+
+def kanban(request):
+    user_story = listar_us()
+    usuarios = Usuario.objects.all()
+    context = {
+        'user_story' : user_story,
+        'usuarios' : usuarios,
+    }
+    if request.method == 'POST':
+        us = buscar_us(request.POST['id_us'])
+        if request.POST['estado'] == '1':
+            if request.POST['usuario'] != '0':               
+               usuario = Usuario.objects.filter(id = request.POST['usuario']).first()
+               estado = Estado_Us.objects.filter(id=2).first()
+               us.id_usuario = usuario
+            else:
+                messages.error(request,'Debe asignar un usuario')
+                return redirect('kanban')
+        elif request.POST['estado'] == '2':
+            if us.id_usuario == request.user:
+                estado = Estado_Us.objects.filter(id=3).first()
+            else:
+                messages.error(request,'No puede mover el US')
+                return redirect('kanban')
+        us.id_estado = estado
+        us.save()
+        if request.POST['comentario'] != ' ':
+            comentario = Comentario_Us(comentario=request.POST['comentario'],id_usuario=request.user,id_user_story=us)
+            comentario.save()
+    return render(request,'App/kanban.html',context=context)
+
+def integrantes_proyecto(id_proyecto):
+    return Usuario_Proyecto.objects.filter(id_proyecto=id_proyecto).all()
+
+def buscar_integrante(id_proyecto,id_usuario):
+    return Usuario_Proyecto.objects.filter(id_proyecto=id_proyecto,id_usuario=id_usuario).first()
+
+def proyecto(request,id):
+    proyecto = buscar_proyecto(id)
+    integrantes = integrantes_proyecto(id)
+    backlog = listar_us_backlog(id)
+    context = {
+        'proyecto' : proyecto,
+        'integrantes' : integrantes,
+        'backlog' : backlog,
+    }
+    return render(request,'proyectos/proyecto.html',context=context)
+
+def miembro(request,id):
+    usuarios = Usuario.objects.all()
+    miembros = integrantes_proyecto(id)
+    proyecto = buscar_proyecto(id)
+    context = {
+        'proyecto' : proyecto,
+        'usuarios' : usuarios,
+        'miembros' : miembros,
+    }
+    if request.method == 'POST':
+        if request.POST['integrante'] != '0':
+            usuario = Usuario.objects.filter(id=request.POST['integrante']).first()
+            if buscar_integrante(id_usuario=usuario,id_proyecto=proyecto) is None:
+                integrante = Usuario_Proyecto(id_proyecto=proyecto,id_usuario=usuario)
+                integrante.save()
+                messages.success(request,'Usuario agregado')
+            else:
+                messages.error(request,'El usuario ya es miebro')
+        else:   
+            messages.error(request,'Selecciones un usuario')
+    return render(request,'proyectos/integrantes.html',context=context)
+
+def bmiembro(request,id_proyecto,id_usuario):
+    integrante = buscar_integrante(id_proyecto=id_proyecto,id_usuario=id_usuario)
+    integrante.delete()
+    messages.success(request,'Miembro eliminado')
+    return redirect('miembro',id_proyecto)
+
+def userstory(request,id_us):
+    us = buscar_us(id_us)
+    comentarios = Comentario_Us.objects.filter(id_user_story=id_us).all()
+    context = {
+        'us' : us,
+        'comentarios' : comentarios,
+    }
+    return render(request,'App/userstory.html',context=context)

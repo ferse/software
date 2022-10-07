@@ -1,0 +1,118 @@
+{% extends 'App/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+    <div id="ui-view" style="opacity: 1;">
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{message}}</p>
+            {% endfor %}
+        {% endif %}
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-4">  
+                    <div class="col">
+                        <div class="card">
+                            <center><h1>To Do</h1></center>
+                        </div>
+                    </div>                  
+                    <div class="row-cols-1 g-2">
+                        {% for us in user_story %}
+                        {% if us.id_estado.id == 1 %}
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <a href="{% url 'userstory' us.id %}"><h6 class="card-title text-dark">{{us.nombre}}</h6></a>
+                                        <p class="card-text text-justify">Descripcion: {{us.descripcion}}</p>
+                                        <p class="card-text">Prioridad: {{us.prioridad}}</p>
+                                        <form action="/kanban" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="estado" value="1">
+                                            <input type="hidden" name="id_us" value="{{us.id}}">
+                                            <div class="form-group">
+                                                <label for="usuario">Asignar a:</label>
+                                                <select class="form-select" name="usuario" id="usuario">
+                                                    <option value="0" selected>Seleccione Usuario</option>
+                                                    {% for usuario in usuarios %}
+                                                        <option value="{{usuario.id}}">{{usuario.nombre}} {{usuario.apellido}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="formGroupExampleInput">Comentarios:</label>
+                                                <textarea class="form-control" id="comentario" name="comentario" rows="4"></textarea>
+                                            </div>
+                                            <input type="submit" class="btn btn-success" style="float: right;" value="Mover -->">    
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="col">
+                        <div class="card">
+                            <center><h1>Doing</h1></center>
+                        </div>
+                    </div>
+                    <div class="row-cols-1 g-2">
+                        {% for us in user_story %}
+                        {% if us.id_estado.id == 2 %}
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <a href="#"><h6 class="card-title text-dark">{{us.nombre}}</h6></a>
+                                        <p class="card-text text-justify">Descripcion: {{us.descripcion}}</p>
+                                        <p class="card-text">
+                                            Prioridad: {{us.prioridad}}<br>
+                                            Asignado a: {{us.id_usuario.nombre}} {{us.id_usuario.apellido}}
+                                        </p>
+                                        <form action="/kanban" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="estado" value="2">
+                                            <input type="hidden" name="id_us" value="{{us.id}}">
+                                            <div class="form-group">
+                                                <label for="formGroupExampleInput">Comentarios:</label>
+                                                <textarea class="form-control" id="comentario" name="comentario" rows="4"></textarea>
+                                            </div>
+                                            <input type="submit" class="btn btn-success" style="float: right;" value="Mover -->">    
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="col">
+                        <div class="card">
+                            <center><h1>Done</h1></center>
+                        </div>
+                    </div>
+                    <div class="row-cols-1 g-2">
+                        {% for us in user_story %}
+                        {% if us.id_estado.id == 3 %}
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <a href="#"><h6 class="card-title text-dark">{{us.nombre}}</h6></a>
+                                        <p class="card-text text-justify">Descripcion: {{us.descripcion}}</p>
+                                        <p class="card-text">
+                                            Prioridad: {{us.prioridad}}<br>
+                                            Asignado a: {{us.id_usuario.nombre}} {{us.id_usuario.apellido}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
