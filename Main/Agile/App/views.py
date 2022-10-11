@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from App.models import Usuario
 from django.conf import settings
-from .models import Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
-from datetime import datetime, date
+from .models import Sprint, Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
+from datetime import datetime, date, timedelta
 
 # Create your views here.
 def home(request):
@@ -459,10 +459,12 @@ def proyecto(request,id):
     proyecto = buscar_proyecto(id)
     integrantes = integrantes_proyecto(id)
     backlog = listar_us_backlog(id)
+    sprints = Sprint.objects.filter(id_proyecto=proyecto)
     context = {
         'proyecto' : proyecto,
         'integrantes' : integrantes,
         'backlog' : backlog,
+        'sprints' : sprints,
     }
     return render(request,'proyectos/proyecto.html',context=context)
 
@@ -506,31 +508,42 @@ def userstory(request,id_us):
         
 #Crear SPRINT
 def asprint(request):
+    proyectos = listar_proyectos()
+    context = {
+        'proyectos' : proyectos
+    }
     if request.method == 'POST':
-        descripcion = request.POST['descripcion']
-        fecha_inicio = datetime.date(datetime.strptime(request.POST['fecha_inicio'],'%Y-%m-%d'))
+        if request.POST['proyecto'] != '0':
+            descripcion = request.POST['descripcion']
+            fecha_inicio = datetime.date(datetime.strptime(request.POST['fecha_inicio'],'%Y-%m-%d'))
 
-        if request.POST['duracion']=="":
-            duracion = 14
+            if request.POST['duracion']=="":
+                duracion = 14
+            else:
+                duracion = int(request.POST['duracion'])
+
+            sprint = Sprint(
+                id_proyecto = buscar_proyecto(request.POST['proyecto']),
+                descripcion=descripcion, 
+                duracion=duracion,
+                fecha_inicio=fecha_inicio, 
+                fecha_fin=fecha_inicio + timedelta(days=duracion),
+                )
+            sprint.save()
         else:
-            duracion = int(request.POST['duracion'])
-            
-        
-        sprint = Sprint(
-            descripcion=descripcion, 
-            duracion=duracion,
-            fecha_inicio=fecha_inicio, 
-            fecha_fin=fecha_inicio + timedelta(days=duracion),
-            )
-        sprint.save()
-        return redirect('sprints') 
-    return render(request,"App/asprint.html")
+            messages.error(request,'Seleccione un proyecto')
+            return redirect('asprint')
+        return redirect('sprints',id_proyecto=0) 
+    return render(request,"App/asprint.html",context=context)
     
 #Lista los sprints existentes
-def sprints(request):
-    sprint = Sprint.objects.all()
+def sprints(request,id_proyecto):
+    if id_proyecto != 0:
+        proyecto = buscar_proyecto(id_proyecto)
+        sprint = Sprint.objects.filter(id_proyecto=proyecto).all()
+    else:
+        sprint = Sprint.objects.all()
     return render(request, 'App/sprints.html', {'sprint': sprint})
-
 
 def bsprint(spr):
     id = Sprint.objects.filter(id=spr).first()
@@ -554,5 +567,36 @@ def msprint(request, spr):
         sprint_edit.fecha_fin = sprint_edit.fecha_inicio + timedelta(days=duracion),   
          
         sprint_edit.save()
-        return redirect('sprints')           
+        return redirect('sprints', id_proyecto = 0)           
     return render(request,"app/msprint.html",datos)
+
+#Lista y permite añadir US a un Sprint
+def sprint(request,id_sprint):
+    sprint = Sprint.objects.filter(id = id_sprint).first()
+    user_story = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_sprint__isnull = True).all()
+    backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_sprint = sprint).all()
+    context = {
+        'user_story' : user_story,
+        'backlog' : backlog
+    }
+    if request.method == 'POST':
+        if request.POST['us'] != '0':
+            us = User_Story.objects.filter(id = request.POST['us']).first()
+            us_backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_us = us).first()
+            us_backlog.id_sprint = sprint
+            us_backlog.save()
+            messages.success(request,'US añadido')
+        else:
+            messages.error(request,'Seleccione un US')
+        return redirect('sprint',id_sprint)
+    return render(request,'App/sprint.html', context=context)
+
+def esprint(request,id_backlog):
+    us = Backlog.objects.filter(id = id_backlog).first()
+    aux = us.id_sprint.id
+    us.id_sprint = None
+    us.save()
+    messages.success(request,'US eliminado')
+    return redirect('sprint',aux)
+def dashboard(request):
+    return render(request,'App/dashboard.html')

@@ -1,5 +1,3 @@
-from email.policy import default
-from io import open_code
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 # Create your models here.
@@ -125,6 +123,7 @@ class Sprint(models.Model):
     duracion = models.IntegerField(verbose_name='duracion')
     fecha_inicio = models.DateField(verbose_name='Fecha Inicio')
     fecha_fin = models.DateField(verbose_name='Fecha Fin')
+    id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
 
 class User_Story(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')

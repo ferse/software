@@ -26,6 +26,15 @@
                                     <textarea class="form-control" id="descripcion" name="descripcion" rows="5" required></textarea>
                                 </div>
                                 <div class="form-group col-md-7">
+                                    <label for="formGroupExampleInput">Proyecto:</label>
+                                    <select class="form-select" name="proyecto" id="proyecto">
+                                        <option value="0" selected>Seleccione uno: </option>
+                                        {% for proyecto in proyectos %}
+                                            <option value="{{proyecto.id}}">{{proyecto.nombre}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-7">
                                     <label>Fecha inicio:</label>
                                     <input type="date" name="fecha_inicio" id="fecha_inicio" required>
                                 </div>
@@ -33,7 +42,7 @@
                                     <label>Duracion:</label>
                                     <input type="number" class="form-control" id="duracion" name="duracion">
                                 </div>
-                                <a href="{% url 'sprints' %}" style="margin-left: 70px;" class="btn btn-link">Cancelar</a>
+                                <a href="{% url 'sprints' 0 %}" style="margin-left: 70px;" class="btn btn-link">Cancelar</a>
                                 <button type="submit" style="margin-left: 80px;" class="btn btn-primary">Guardar</button>
                             </form>
                         </div>
@@ -43,5 +52,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
