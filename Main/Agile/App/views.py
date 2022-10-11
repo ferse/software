@@ -502,3 +502,57 @@ def userstory(request,id_us):
         'comentarios' : comentarios,
     }
     return render(request,'App/userstory.html',context=context)
+    
+        
+#Crear SPRINT
+def asprint(request):
+    if request.method == 'POST':
+        descripcion = request.POST['descripcion']
+        fecha_inicio = datetime.date(datetime.strptime(request.POST['fecha_inicio'],'%Y-%m-%d'))
+
+        if request.POST['duracion']=="":
+            duracion = 14
+        else:
+            duracion = int(request.POST['duracion'])
+            
+        
+        sprint = Sprint(
+            descripcion=descripcion, 
+            duracion=duracion,
+            fecha_inicio=fecha_inicio, 
+            fecha_fin=fecha_inicio + timedelta(days=duracion),
+            )
+        sprint.save()
+        return redirect('sprints') 
+    return render(request,"App/asprint.html")
+    
+#Lista los sprints existentes
+def sprints(request):
+    sprint = Sprint.objects.all()
+    return render(request, 'App/sprints.html', {'sprint': sprint})
+
+
+def bsprint(spr):
+    id = Sprint.objects.filter(id=spr).first()
+    return id
+
+def msprint(request, spr):
+    sprint_edit= bsprint(spr)
+    datos={
+        'descripcion':sprint_edit.descripcion,
+        'fecha_inicio':sprint_edit.fecha_inicio,
+        'duracion':sprint_edit.duracion,
+    }
+    if request.method == 'POST':
+        sprint_edit.descripcion = request.POST['descripcion']
+        sprint_edit.fecha_inicio = datetime.date(datetime.strptime(request.POST['fecha_inicio'],'%Y-%m-%d'))
+        
+        if request.POST['duracion']=="":
+            duracion = 14
+        else:
+            duracion = int(request.POST['duracion'])
+        sprint_edit.fecha_fin = sprint_edit.fecha_inicio + timedelta(days=duracion),   
+         
+        sprint_edit.save()
+        return redirect('sprints')           
+    return render(request,"app/msprint.html",datos)
