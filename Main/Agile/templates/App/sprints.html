@@ -14,6 +14,7 @@
             <thead>
                 <tr>
                     <th>Descripcion</th>
+                    <th>Proyecto</th>
                     <th>Fecha Inicio</th>
                     <th>Fecha Fin</th>
                     <th>Acciones</th>
@@ -23,12 +24,12 @@
                 {% for S in sprint %}
                 <tr>
                     <td>{{ S.descripcion }}</td>
+                    <td>{{ S.id_proyecto.nombre }}</td>
                     <td>{{ S.fecha_inicio }}</td>
                     <td>{{ S.fecha_fin }}</td>
                     <td>
                         <a name="" id="" class="btn btn-info" href="msprint/{{S.id}}" role="button">Modificar</a>
-                        <a name="" id="" class="btn btn-primary" href="" role="button">Backlog</a>
-
+                        <a name="" id="" class="btn btn-primary" href="{% url 'sprint' S.id %}" role="button">Backlog</a>
                     </td>
                 </tr>
                 {% endfor %}

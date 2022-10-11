@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('home', views.home, name='home'),
+    path('dashboard', views.dashboard, name='dashboard'),
     path('', views.logear, name='logear'),
     path('dashboard', views.home, name='dashboard'),
     path('users', views.usuarios, name='users'),
@@ -23,7 +24,9 @@ urlpatterns = [
     path('bus/<int:id_us>/<str:aux>', views.bus, name='bus'),
     path('proyectos', views.proyectos, name='proyectos'),
     path('aproyecto', views.aproyecto, name='aproyecto'),
-    path('sprints', views.sprints, name='sprints'),
+    path('sprints/<int:id_proyecto>', views.sprints, name='sprints'),
+    path('sprint/<int:id_sprint>', views.sprint, name='sprint'),
+    path('esprint/<int:id_backlog>', views.esprint, name='esprint'),
     path('asprint', views.asprint, name='asprint'),
     path('msprint/<int:spr>', views.msprint, name='msprint'),
     path('mproy/<str:proyecto>', views.mproy, name='mproy'),
