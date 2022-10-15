@@ -214,6 +214,11 @@ def buscar(alias):
     users = Usuario.objects.filter(alias=alias).first()
     return users
 
+#Busca y retorna permisos
+def buscarP(nombre):
+    permisos = Permiso.objects.filter(nombre=nombre).first()
+    return permisos
+
 #Crear User Story
 def aus(request):
     if request.method == 'POST':
@@ -600,3 +605,53 @@ def esprint(request,id_backlog):
     return redirect('sprint',aux)
 def dashboard(request):
     return render(request,'App/dashboard.html')
+
+#Crear Permiso
+def apermiso(request):
+    if request.method == 'POST':
+        nombre = request.POST['nombre']        
+        descripcion = request.POST['descripcion']        
+        if Permiso.objects.filter(nombre=nombre):
+            messages.error(request,'El permiso "' + nombre + '" ya existe')
+            return redirect('apermiso')
+        else:
+            permiso = Permiso(nombre=nombre, descripcion=descripcion)
+            permiso.save()
+            return redirect('permisos')
+    return render(request, 'paginas/apermiso.html')
+
+
+#Modificar Permiso
+def mpermiso(request,nombre):
+    perm = buscarP(nombre)
+    datos = {
+        'nombre': perm.nombre,
+        'descripcion':perm.descripcion,
+    }
+    if request.method == 'POST':
+        cambio = False
+        #Verifica si se modifico algun campo del permiso
+        if request.POST['nombre'] != perm.nombre:
+            perm.nombre = request.POST['nombre']
+            cambio = True
+        if request.POST['descripcion'] != perm.descripcion:
+            perm.descripcion = request.POST['descripcion']
+            cambio = True
+        #Su hubo cambios, los guarda en la base de datos
+        if cambio:
+            perm.save()
+            messages.success(request,'Modificacion exitosa')
+            return redirect('permisos')
+        #Sino vuelve a Consultar
+        else:
+            #messages.error(request,'No se realizo ningun cambio')
+            return redirect('permisos')
+    return render(request,'paginas/mpermiso.html',datos)
+
+#Eliminar Usuario
+def bpermiso(request, nombre, aux):
+    if aux == 'si':
+        perm = buscarP(nombre)
+        perm.delete()
+        return redirect('permisos')
+    return render(request,'paginas/bpermiso.html',{'nombre':nombre})

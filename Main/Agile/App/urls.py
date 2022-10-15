@@ -39,4 +39,8 @@ urlpatterns = [
     path('miembro/<int:id>', views.miembro, name='miembro'),
     path('bmiembro/<int:id_proyecto>/<int:id_usuario>', views.bmiembro, name='bmiembro'),
     path('userstory/<int:id_us>', views.userstory, name='userstory'),
+    path('permisos', views.permisos, name='permisos'),
+    path('apermiso', views.apermiso, name='apermiso'),
+    path('mpermiso/<str:nombre>', views.mpermiso, name='mpermiso'),
+    path('bpermiso/<str:nombre>/<str:aux>', views.bpermiso, name='bpermiso'),
 ]

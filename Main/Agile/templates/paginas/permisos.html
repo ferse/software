@@ -26,8 +26,8 @@
                     <td>{{ Permiso.nombre }}</td>
                     <td>{{ Permiso.descripcion }}</td>
                     <td>
-                        <a name="" id="" class="btn btn-info" href="#" role="button">Modificar</a>
-                        <a name="" id="" class="btn btn-danger" href="#" role="button">Eliminar</a>
+                        <a name="" id="" class="btn btn-info" href="{% url 'mpermiso' Permiso.nombre %}" role="button">Modificar</a>
+                        <a name="" id="" class="btn btn-danger" href="{% url 'bpermiso' Permiso.nombre 'baja' %}" role="button">Eliminar</a>
                     </td>
                 </tr>
                 {% endfor %}

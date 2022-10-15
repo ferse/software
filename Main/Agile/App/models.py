@@ -70,7 +70,7 @@ class Formulario(models.Model):
 class Permiso(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
-    id_formulario = models.ForeignKey(Formulario, on_delete=models.CASCADE)
+    id_formulario = models.ForeignKey(Formulario, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         fila = "ID: " + str(self.id_formulario) + " - " + "Nombre: " + self.nombre + " - " + "Descripcion: " + self.descripcion
@@ -123,7 +123,7 @@ class Sprint(models.Model):
     duracion = models.IntegerField(verbose_name='duracion')
     fecha_inicio = models.DateField(verbose_name='Fecha Inicio')
     fecha_fin = models.DateField(verbose_name='Fecha Fin')
-    id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE, null=True)
 
 class User_Story(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')
