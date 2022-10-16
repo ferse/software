@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
 # Create your models here.
 class MyAccountManager(BaseUserManager):
     def create_user(self, email, alias, nombre, apellido, password=None):
@@ -35,7 +36,7 @@ class MyAccountManager(BaseUserManager):
         usuario.save(using=self._db)
         return usuario
 
-class Usuario(AbstractBaseUser):
+class Usuario(AbstractBaseUser, PermissionsMixin):
     alias = models.CharField(unique=True, max_length=20, verbose_name='alias')
     email = models.EmailField(max_length=60, verbose_name='email')
     nombre = models.CharField(max_length=20, verbose_name='nombre')

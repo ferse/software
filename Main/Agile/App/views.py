@@ -3,8 +3,21 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from App.models import Usuario
 from django.conf import settings
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from .models import Sprint, Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
 from datetime import datetime, date, timedelta
+
+def validarPermisos(request, permiso):
+    rolusuario = listar_usurol(request.user.id)
+    result = False
+    for rol in rolusuario:
+        rolespermisos = buscar_rol_permisob(rol.id_rol)
+        for permisos in rolespermisos:
+            print(permisos.id_permiso)
+            if permisos.id_permiso.nombre == permiso:
+                result = True
+    return result
 
 # Create your views here.
 def home(request):
@@ -38,8 +51,16 @@ def usuarios(request):
     return render(request, 'paginas/users.html', {'usuarios': usuarios})
 #Retorna todos los permisos de la base de datos
 def permisos(request):
+    if not validarPermisos(request, 'LISTAR_PERMISO'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_PERMISO')
+    modificar = validarPermisos(request, 'MODIFICAR_PERMISO')
+    eliminar = validarPermisos(request, 'ELIMINAR_PERMISO')
+    
+
     permisos = Permiso.objects.all()
-    return render(request, 'paginas/permisos.html', {'permisos': permisos})
+    return render(request, 'paginas/permisos.html', {'permisos': permisos, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 #Retorna todos los roles de la base de datos
 def roles(request):
     roles = Rol.objects.all()
@@ -344,6 +365,10 @@ def listar_permisos_rol(id_rol):
     return perm
 
 #Retorna el Rol y el Permiso si tiene asignado
+def buscar_rol_permisob(id_rol):
+    return Rol_Permiso.objects.filter(id_rol = id_rol).all()
+
+#Retorna el Rol y el Permiso si tiene asignado
 def buscar_rol_permiso(id_rol,permiso):
     return Rol_Permiso.objects.filter(id_rol = id_rol, id_permiso = permiso).first()
 
@@ -623,6 +648,8 @@ def apermiso(request):
 
 #Modificar Permiso
 def mpermiso(request,nombre):
+    if not validarPermisos(request, 'MODIFICAR_PERMISO'):
+        return redirect('home')
     perm = buscarP(nombre)
     datos = {
         'nombre': perm.nombre,
