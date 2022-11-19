@@ -3,8 +3,21 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from App.models import Usuario
 from django.conf import settings
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from .models import Sprint, Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
 from datetime import datetime, date, timedelta
+
+def validarPermisos(request, permiso):
+    rolusuario = listar_usurol(request.user.id)
+    result = False
+    for rol in rolusuario:
+        rolespermisos = buscar_rol_permisob(rol.id_rol)
+        for permisos in rolespermisos:
+            print(permisos.id_permiso)
+            if permisos.id_permiso.nombre == permiso:
+                result = True
+    return result
 
 # Create your views here.
 def home(request):
@@ -38,8 +51,16 @@ def usuarios(request):
     return render(request, 'paginas/users.html', {'usuarios': usuarios})
 #Retorna todos los permisos de la base de datos
 def permisos(request):
+    if not validarPermisos(request, 'LISTAR_PERMISO'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_PERMISO')
+    modificar = validarPermisos(request, 'MODIFICAR_PERMISO')
+    eliminar = validarPermisos(request, 'ELIMINAR_PERMISO')
+    
+
     permisos = Permiso.objects.all()
-    return render(request, 'paginas/permisos.html', {'permisos': permisos})
+    return render(request, 'paginas/permisos.html', {'permisos': permisos, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 #Retorna todos los roles de la base de datos
 def roles(request):
     roles = Rol.objects.all()
@@ -214,6 +235,11 @@ def buscar(alias):
     users = Usuario.objects.filter(alias=alias).first()
     return users
 
+#Busca y retorna permisos
+def buscarP(nombre):
+    permisos = Permiso.objects.filter(nombre=nombre).first()
+    return permisos
+
 #Crear User Story
 def aus(request):
     if request.method == 'POST':
@@ -337,6 +363,10 @@ def listar_permisos_rol(id_rol):
     for x in aux:
         perm.add(x.perm())
     return perm
+
+#Retorna el Rol y el Permiso si tiene asignado
+def buscar_rol_permisob(id_rol):
+    return Rol_Permiso.objects.filter(id_rol = id_rol).all()
 
 #Retorna el Rol y el Permiso si tiene asignado
 def buscar_rol_permiso(id_rol,permiso):
@@ -600,3 +630,55 @@ def esprint(request,id_backlog):
     return redirect('sprint',aux)
 def dashboard(request):
     return render(request,'App/dashboard.html')
+
+#Crear Permiso
+def apermiso(request):
+    if request.method == 'POST':
+        nombre = request.POST['nombre']        
+        descripcion = request.POST['descripcion']        
+        if Permiso.objects.filter(nombre=nombre):
+            messages.error(request,'El permiso "' + nombre + '" ya existe')
+            return redirect('apermiso')
+        else:
+            permiso = Permiso(nombre=nombre, descripcion=descripcion)
+            permiso.save()
+            return redirect('permisos')
+    return render(request, 'paginas/apermiso.html')
+
+
+#Modificar Permiso
+def mpermiso(request,nombre):
+    if not validarPermisos(request, 'MODIFICAR_PERMISO'):
+        return redirect('home')
+    perm = buscarP(nombre)
+    datos = {
+        'nombre': perm.nombre,
+        'descripcion':perm.descripcion,
+    }
+    if request.method == 'POST':
+        cambio = False
+        #Verifica si se modifico algun campo del permiso
+        if request.POST['nombre'] != perm.nombre:
+            perm.nombre = request.POST['nombre']
+            cambio = True
+        if request.POST['descripcion'] != perm.descripcion:
+            perm.descripcion = request.POST['descripcion']
+            cambio = True
+        #Su hubo cambios, los guarda en la base de datos
+        if cambio:
+            perm.save()
+            messages.success(request,'Modificacion exitosa')
+            return redirect('permisos')
+        #Sino vuelve a Consultar
+        else:
+            #messages.error(request,'No se realizo ningun cambio')
+            return redirect('permisos')
+    return render(request,'paginas/mpermiso.html',datos)
+
+#Eliminar Usuario
+def bpermiso(request, nombre, aux):
+    if aux == 'si':
+        perm = buscarP(nombre)
+        perm.delete()
+        return redirect('permisos')
+    return render(request,'paginas/bpermiso.html',{'nombre':nombre})

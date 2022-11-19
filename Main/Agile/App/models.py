@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
 # Create your models here.
 class MyAccountManager(BaseUserManager):
     def create_user(self, email, alias, nombre, apellido, password=None):
@@ -35,7 +36,7 @@ class MyAccountManager(BaseUserManager):
         usuario.save(using=self._db)
         return usuario
 
-class Usuario(AbstractBaseUser):
+class Usuario(AbstractBaseUser, PermissionsMixin):
     alias = models.CharField(unique=True, max_length=20, verbose_name='alias')
     email = models.EmailField(max_length=60, verbose_name='email')
     nombre = models.CharField(max_length=20, verbose_name='nombre')
@@ -70,7 +71,7 @@ class Formulario(models.Model):
 class Permiso(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
-    id_formulario = models.ForeignKey(Formulario, on_delete=models.CASCADE)
+    id_formulario = models.ForeignKey(Formulario, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         fila = "ID: " + str(self.id_formulario) + " - " + "Nombre: " + self.nombre + " - " + "Descripcion: " + self.descripcion
@@ -103,6 +104,9 @@ class Estado_Proyecto(models.Model):
 class Estado_Us(models.Model):
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
 
+class Estado_Sprint(models.Model):
+    descripcion = models.CharField(max_length=100, verbose_name='descripcion')
+
 class Proyecto(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
@@ -123,7 +127,8 @@ class Sprint(models.Model):
     duracion = models.IntegerField(verbose_name='duracion')
     fecha_inicio = models.DateField(verbose_name='Fecha Inicio')
     fecha_fin = models.DateField(verbose_name='Fecha Fin')
-    id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE, null=True)
+    id_estado_sprint = models.ForeignKey(Estado_Sprint, on_delete=models.CASCADE, null=True)
 
 class User_Story(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')
