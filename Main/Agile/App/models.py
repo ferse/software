@@ -104,6 +104,9 @@ class Estado_Proyecto(models.Model):
 class Estado_Us(models.Model):
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
 
+class Estado_Sprint(models.Model):
+    descripcion = models.CharField(max_length=100, verbose_name='descripcion')
+
 class Proyecto(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
@@ -125,6 +128,7 @@ class Sprint(models.Model):
     fecha_inicio = models.DateField(verbose_name='Fecha Inicio')
     fecha_fin = models.DateField(verbose_name='Fecha Fin')
     id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE, null=True)
+    id_estado_sprint = models.ForeignKey(Estado_Sprint, on_delete=models.CASCADE, null=True)
 
 class User_Story(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')
