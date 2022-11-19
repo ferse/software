@@ -1,0 +1,31 @@
+{% extends 'App/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+  <div id="ui-view" style="opacity: 1;">
+    <div class="animated fadeIn">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <i class="fa fa-align-justify"></i> Baja Permiso
+              <div class="card-actions"></div>
+            </div>
+            <div class="card-body">              
+                <br>
+                <br>
+                <center>
+                    <h2>¿Desea dar de baja el permiso: {{nombre}}?</h2>
+                    <br>
+                    <a href="{% url 'permisos' %}" class="btn btn-link">Cancelar</a>
+                    <a href="si" class="btn btn-primary">Dar Baja</a>
+                </center>
+                <br>
+                <br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-6">
+        <div class="col-4">
           <div class="card">
             <div class="card-body">
                 <h1 class="card-title">Integrantes <a class="btn btn-primary" style="float: right;" href="{% url 'miembro' proyecto.id %}">Editar</a></h1> 
@@ -31,7 +31,7 @@
             </div>
           </div>
         </div>
-        <div class="col-6">
+        <div class="col-4">
             <div class="card">
               <div class="card-body">
                   <h1 class="card-title">Backlog <a class="btn btn-primary" style="float: right;" href="{% url 'backlog' proyecto.id %}">Editar</a></h1> 
@@ -43,6 +43,22 @@
                       </ul>      
                   {% else %}      
                       <center><p>El proyecto no tiene User Story</p></center>
+                  {% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                  <h1 class="card-title">Sprints <a class="btn btn-primary" style="float: right;" href="{% url 'sprints' proyecto.id %}">Editar</a></h1> 
+                  {% if sprints %}
+                      <ul>
+                          {% for sprint in sprints %}
+                              <li>{{sprint.id}}</li>
+                          {% endfor %}
+                      </ul>      
+                  {% else %}      
+                      <center><p>El proyecto no tiene sprints</p></center>
                   {% endif %}
               </div>
             </div>

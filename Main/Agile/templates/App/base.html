@@ -106,13 +106,17 @@
           <li class="nav-item">
             <a class="nav-link" href=""><i class="fa fa-home"></i> Pagina Principal</a>
           </li>
+          {% if proyecto %}
           <li class="nav-title">
             Reportes
           </li>
           <li class="nav-item">
             <a class="nav-link" href="dashboard"><i class="fa fa-tachometer-alt"></i> Burdownchart</a>
           </li>
-
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'kanban' %}"><i class="fa fa-tachometer-alt"></i> KanBan</a>
+          </li>
+          {% endif %}
           <!--<li class="nav-title">-->
           <!--Theme-->
           <!--</li>-->
@@ -129,7 +133,8 @@
             <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-industry"></i> Sprint</a>
             <ul class="nav-dropdown-items">
               <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fa fa-plus ml-2"></i> Nuevo Sprint</a>
+                <a class="nav-link" href="{% url 'sprints' 0 %}"><i class="fa fa-list ml-2"></i> Listar Sprints</a>
+                <a class="nav-link" href="{% url 'asprint' %}"><i class="fa fa-plus ml-2"></i> Nuevo Sprint</a>
               </li>
             </ul>
           </li>
@@ -142,6 +147,7 @@
                 </li>
             </ul>
           </li>
+          
           <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-puzzle-piece"></i> User Story</a>
             <ul class="nav-dropdown-items">
@@ -159,7 +165,6 @@
               </li>
             </ul>
           </li>
-
           <li class="nav-item nav-dropdown">
             <a class="nav-link nav-dropdown-toggle" href="#"><i class="fa fa-user"></i> Usuario</a>
             <ul class="nav-dropdown-items">
@@ -179,7 +184,7 @@
                     <a class="nav-link" href="{% url 'permisos' %}"><i class="fa fa-list ml-2"></i> Listar Permisos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fa fa-plus ml-2"></i> Crear Permiso</a>
+                    <a class="nav-link" href="{% url 'apermiso' %}"><i class="fa fa-plus ml-2"></i> Crear Permiso</a>
                 </li>
             </ul>
           </li>

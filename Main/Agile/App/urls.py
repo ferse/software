@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('home', views.home, name='home'),
+    path('dashboard', views.dashboard, name='dashboard'),
     path('', views.logear, name='logear'),
     path('dashboard', views.home, name='dashboard'),
     path('users', views.usuarios, name='users'),
@@ -23,6 +24,11 @@ urlpatterns = [
     path('bus/<int:id_us>/<str:aux>', views.bus, name='bus'),
     path('proyectos', views.proyectos, name='proyectos'),
     path('aproyecto', views.aproyecto, name='aproyecto'),
+    path('sprints/<int:id_proyecto>', views.sprints, name='sprints'),
+    path('sprint/<int:id_sprint>', views.sprint, name='sprint'),
+    path('esprint/<int:id_backlog>', views.esprint, name='esprint'),
+    path('asprint', views.asprint, name='asprint'),
+    path('msprint/<int:spr>', views.msprint, name='msprint'),
     path('mproy/<str:proyecto>', views.mproy, name='mproy'),
     path('eproy/<str:nombre>/<str:aux>', views.eproy, name='eproy'),
     path('backlog/<int:id_proyecto>', views.backlog, name='backlog'),
@@ -33,4 +39,8 @@ urlpatterns = [
     path('miembro/<int:id>', views.miembro, name='miembro'),
     path('bmiembro/<int:id_proyecto>/<int:id_usuario>', views.bmiembro, name='bmiembro'),
     path('userstory/<int:id_us>', views.userstory, name='userstory'),
+    path('permisos', views.permisos, name='permisos'),
+    path('apermiso', views.apermiso, name='apermiso'),
+    path('mpermiso/<str:nombre>', views.mpermiso, name='mpermiso'),
+    path('bpermiso/<str:nombre>/<str:aux>', views.bpermiso, name='bpermiso'),
 ]

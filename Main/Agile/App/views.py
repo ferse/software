@@ -3,8 +3,21 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from App.models import Usuario
 from django.conf import settings
-from .models import Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
-from datetime import datetime, date
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+from .models import Sprint, Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
+from datetime import datetime, date, timedelta
+
+def validarPermisos(request, permiso):
+    rolusuario = listar_usurol(request.user.id)
+    result = False
+    for rol in rolusuario:
+        rolespermisos = buscar_rol_permisob(rol.id_rol)
+        for permisos in rolespermisos:
+            print(permisos.id_permiso)
+            if permisos.id_permiso.nombre == permiso:
+                result = True
+    return result
 
 # Create your views here.
 def home(request):
@@ -38,8 +51,16 @@ def usuarios(request):
     return render(request, 'paginas/users.html', {'usuarios': usuarios})
 #Retorna todos los permisos de la base de datos
 def permisos(request):
+    if not validarPermisos(request, 'LISTAR_PERMISO'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_PERMISO')
+    modificar = validarPermisos(request, 'MODIFICAR_PERMISO')
+    eliminar = validarPermisos(request, 'ELIMINAR_PERMISO')
+    
+
     permisos = Permiso.objects.all()
-    return render(request, 'paginas/permisos.html', {'permisos': permisos})
+    return render(request, 'paginas/permisos.html', {'permisos': permisos, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 #Retorna todos los roles de la base de datos
 def roles(request):
     roles = Rol.objects.all()
@@ -214,6 +235,11 @@ def buscar(alias):
     users = Usuario.objects.filter(alias=alias).first()
     return users
 
+#Busca y retorna permisos
+def buscarP(nombre):
+    permisos = Permiso.objects.filter(nombre=nombre).first()
+    return permisos
+
 #Crear User Story
 def aus(request):
     if request.method == 'POST':
@@ -339,6 +365,10 @@ def listar_permisos_rol(id_rol):
     return perm
 
 #Retorna el Rol y el Permiso si tiene asignado
+def buscar_rol_permisob(id_rol):
+    return Rol_Permiso.objects.filter(id_rol = id_rol).all()
+
+#Retorna el Rol y el Permiso si tiene asignado
 def buscar_rol_permiso(id_rol,permiso):
     return Rol_Permiso.objects.filter(id_rol = id_rol, id_permiso = permiso).first()
 
@@ -459,10 +489,12 @@ def proyecto(request,id):
     proyecto = buscar_proyecto(id)
     integrantes = integrantes_proyecto(id)
     backlog = listar_us_backlog(id)
+    sprints = Sprint.objects.filter(id_proyecto=proyecto)
     context = {
         'proyecto' : proyecto,
         'integrantes' : integrantes,
         'backlog' : backlog,
+        'sprints' : sprints,
     }
     return render(request,'proyectos/proyecto.html',context=context)
 
@@ -502,3 +534,151 @@ def userstory(request,id_us):
         'comentarios' : comentarios,
     }
     return render(request,'App/userstory.html',context=context)
+    
+        
+#Crear SPRINT
+def asprint(request):
+    proyectos = listar_proyectos()
+    context = {
+        'proyectos' : proyectos
+    }
+    if request.method == 'POST':
+        if request.POST['proyecto'] != '0':
+            descripcion = request.POST['descripcion']
+            fecha_inicio = datetime.date(datetime.strptime(request.POST['fecha_inicio'],'%Y-%m-%d'))
+
+            if request.POST['duracion']=="":
+                duracion = 14
+            else:
+                duracion = int(request.POST['duracion'])
+
+            sprint = Sprint(
+                id_proyecto = buscar_proyecto(request.POST['proyecto']),
+                descripcion=descripcion, 
+                duracion=duracion,
+                fecha_inicio=fecha_inicio, 
+                fecha_fin=fecha_inicio + timedelta(days=duracion),
+                )
+            sprint.save()
+        else:
+            messages.error(request,'Seleccione un proyecto')
+            return redirect('asprint')
+        return redirect('sprints',id_proyecto=0) 
+    return render(request,"App/asprint.html",context=context)
+    
+#Lista los sprints existentes
+def sprints(request,id_proyecto):
+    if id_proyecto != 0:
+        proyecto = buscar_proyecto(id_proyecto)
+        sprint = Sprint.objects.filter(id_proyecto=proyecto).all()
+    else:
+        sprint = Sprint.objects.all()
+    return render(request, 'App/sprints.html', {'sprint': sprint})
+
+def bsprint(spr):
+    id = Sprint.objects.filter(id=spr).first()
+    return id
+
+def msprint(request, spr):
+    sprint_edit= bsprint(spr)
+    datos={
+        'descripcion':sprint_edit.descripcion,
+        'fecha_inicio':sprint_edit.fecha_inicio,
+        'duracion':sprint_edit.duracion,
+    }
+    if request.method == 'POST':
+        sprint_edit.descripcion = request.POST['descripcion']
+        sprint_edit.fecha_inicio = datetime.date(datetime.strptime(request.POST['fecha_inicio'],'%Y-%m-%d'))
+        
+        if request.POST['duracion']=="":
+            duracion = 14
+        else:
+            duracion = int(request.POST['duracion'])
+        sprint_edit.fecha_fin = sprint_edit.fecha_inicio + timedelta(days=duracion),   
+         
+        sprint_edit.save()
+        return redirect('sprints', id_proyecto = 0)           
+    return render(request,"app/msprint.html",datos)
+
+#Lista y permite añadir US a un Sprint
+def sprint(request,id_sprint):
+    sprint = Sprint.objects.filter(id = id_sprint).first()
+    user_story = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_sprint__isnull = True).all()
+    backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_sprint = sprint).all()
+    context = {
+        'user_story' : user_story,
+        'backlog' : backlog
+    }
+    if request.method == 'POST':
+        if request.POST['us'] != '0':
+            us = User_Story.objects.filter(id = request.POST['us']).first()
+            us_backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_us = us).first()
+            us_backlog.id_sprint = sprint
+            us_backlog.save()
+            messages.success(request,'US añadido')
+        else:
+            messages.error(request,'Seleccione un US')
+        return redirect('sprint',id_sprint)
+    return render(request,'App/sprint.html', context=context)
+
+def esprint(request,id_backlog):
+    us = Backlog.objects.filter(id = id_backlog).first()
+    aux = us.id_sprint.id
+    us.id_sprint = None
+    us.save()
+    messages.success(request,'US eliminado')
+    return redirect('sprint',aux)
+def dashboard(request):
+    return render(request,'App/dashboard.html')
+
+#Crear Permiso
+def apermiso(request):
+    if request.method == 'POST':
+        nombre = request.POST['nombre']        
+        descripcion = request.POST['descripcion']        
+        if Permiso.objects.filter(nombre=nombre):
+            messages.error(request,'El permiso "' + nombre + '" ya existe')
+            return redirect('apermiso')
+        else:
+            permiso = Permiso(nombre=nombre, descripcion=descripcion)
+            permiso.save()
+            return redirect('permisos')
+    return render(request, 'paginas/apermiso.html')
+
+
+#Modificar Permiso
+def mpermiso(request,nombre):
+    if not validarPermisos(request, 'MODIFICAR_PERMISO'):
+        return redirect('home')
+    perm = buscarP(nombre)
+    datos = {
+        'nombre': perm.nombre,
+        'descripcion':perm.descripcion,
+    }
+    if request.method == 'POST':
+        cambio = False
+        #Verifica si se modifico algun campo del permiso
+        if request.POST['nombre'] != perm.nombre:
+            perm.nombre = request.POST['nombre']
+            cambio = True
+        if request.POST['descripcion'] != perm.descripcion:
+            perm.descripcion = request.POST['descripcion']
+            cambio = True
+        #Su hubo cambios, los guarda en la base de datos
+        if cambio:
+            perm.save()
+            messages.success(request,'Modificacion exitosa')
+            return redirect('permisos')
+        #Sino vuelve a Consultar
+        else:
+            #messages.error(request,'No se realizo ningun cambio')
+            return redirect('permisos')
+    return render(request,'paginas/mpermiso.html',datos)
+
+#Eliminar Usuario
+def bpermiso(request, nombre, aux):
+    if aux == 'si':
+        perm = buscarP(nombre)
+        perm.delete()
+        return redirect('permisos')
+    return render(request,'paginas/bpermiso.html',{'nombre':nombre})
