@@ -134,10 +134,6 @@ class User_Story(models.Model):
     nombre = models.CharField(max_length=50, verbose_name='nombre')
     descripcion = models.CharField(max_length=100, verbose_name='descripcion')
     fecha_creacion = models.DateField()
-    prioridad = models.IntegerField(verbose_name='Prioridad')
-    id_sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE, null=True)
-    id_estado = models.ForeignKey(Estado_Us, on_delete=models.CASCADE)
-    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True)
 
 class Comentario_Us(models.Model):
     comentario = models.TextField(verbose_name='Comentario')
@@ -149,3 +145,7 @@ class Backlog(models.Model):
     id_proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     id_sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE, null=True)
     id_us = models.ForeignKey(User_Story, on_delete=models.CASCADE)
+    id_estado = models.ForeignKey(Estado_Us, on_delete=models.CASCADE, default=1)
+    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True)
+    prioridad = models.IntegerField(verbose_name='Prioridad', default=0)
+    id_sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE, null=True)

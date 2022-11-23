@@ -5,7 +5,7 @@ from App.models import Usuario
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from .models import Sprint, Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
+from .models import Sprint, Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso, Estado_Sprint
 from datetime import datetime, date, timedelta
 
 def validarPermisos(request, permiso):
@@ -247,15 +247,10 @@ def aus(request):
         descripcion = request.POST['descripcion']
         #La fecha de cracion carga automaticamente la fecha actual
         fecha_creacion = datetime.today().strftime('%Y-%m-%d')
-        #Estado por defecto es TO DO
-        estado = Estado_Us.objects.filter(descripcion='To Do').first()
         us = User_Story(
             nombre = nombre,
             descripcion = descripcion,
-            fecha_creacion = fecha_creacion,
-            #Prioridad por defecto es 0
-            prioridad = 0,
-            id_estado = estado
+            fecha_creacion = fecha_creacion
             )
         us.save()
         messages.success(request,'User Story creado exitosamente')
@@ -449,38 +444,50 @@ def backlogs(request):
         proyectos.append(buscar_proyecto(b['id_proyecto']))
     return render(request,'paginas/backlogs.html',{'proyectos':proyectos})
 
-def kanban(request):
-    user_story = listar_us()
-    usuarios = Usuario.objects.all()
+def sprint_activo(id_proyecto):
+    estado = Estado_Sprint.objects.filter(id=2).first()
+    proyecto = buscar_proyecto(id_proyecto)
+    return Sprint.objects.filter(id_proyecto = proyecto, id_estado_sprint = estado).first()
+
+def listar_us_sprint_activo(id_proyecto):
+    sprint = sprint_activo(id_proyecto)
+    return Backlog.objects.filter(id_sprint = sprint).all()
+
+def kanban(request, id_proyecto):
+    user_story = listar_us_sprint_activo(id_proyecto)
+    usuarios = integrantes_proyecto(id_proyecto)
     context = {
         'user_story' : user_story,
         'usuarios' : usuarios,
     }
     if request.method == 'POST':
+        sprint = sprint_activo(id_proyecto)
         us = buscar_us(request.POST['id_us'])
+        us_backlog = Backlog.objects.filter(id_sprint = sprint, id_us = us).first()
         if request.POST['estado'] == '1':
             if request.POST['usuario'] != '0':               
                usuario = Usuario.objects.filter(id = request.POST['usuario']).first()
                estado = Estado_Us.objects.filter(id=2).first()
-               us.id_usuario = usuario
+               us_backlog.id_usuario = usuario
             else:
                 messages.error(request,'Debe asignar un usuario')
-                return redirect('kanban')
+                return redirect('kanban',id_proyecto)
         elif request.POST['estado'] == '2':
-            if us.id_usuario == request.user:
+            if us_backlog.id_usuario == request.user:
                 estado = Estado_Us.objects.filter(id=3).first()
             else:
                 messages.error(request,'No puede mover el US')
-                return redirect('kanban')
-        us.id_estado = estado
-        us.save()
-        if request.POST['comentario'] != ' ':
+                return redirect('kanban', id_proyecto)
+        us_backlog.id_estado = estado
+        us_backlog.save()
+        if request.POST['comentario'] != '':
             comentario = Comentario_Us(comentario=request.POST['comentario'],id_usuario=request.user,id_user_story=us)
             comentario.save()
     return render(request,'App/kanban.html',context=context)
 
 def integrantes_proyecto(id_proyecto):
-    return Usuario_Proyecto.objects.filter(id_proyecto=id_proyecto).all()
+    proyecto = buscar_proyecto(id_proyecto)
+    return Usuario_Proyecto.objects.filter(id_proyecto=proyecto).all()
 
 def buscar_integrante(id_proyecto,id_usuario):
     return Usuario_Proyecto.objects.filter(id_proyecto=id_proyecto,id_usuario=id_usuario).first()
@@ -614,6 +621,7 @@ def sprint(request,id_sprint):
             us = User_Story.objects.filter(id = request.POST['us']).first()
             us_backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_us = us).first()
             us_backlog.id_sprint = sprint
+            us_backlog.prioridad = 0
             us_backlog.save()
             messages.success(request,'US añadido')
         else:
