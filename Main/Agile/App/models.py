@@ -148,4 +148,3 @@ class Backlog(models.Model):
     id_estado = models.ForeignKey(Estado_Us, on_delete=models.CASCADE, default=1)
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True)
     prioridad = models.IntegerField(verbose_name='Prioridad', default=0)
-    id_sprint = models.ForeignKey(Sprint, on_delete=models.CASCADE, null=True)

@@ -621,7 +621,7 @@ def sprint(request,id_sprint):
             us = User_Story.objects.filter(id = request.POST['us']).first()
             us_backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_us = us).first()
             us_backlog.id_sprint = sprint
-            us_backlog.prioridad = 0
+            us_backlog.prioridad = request.POST['prioridad']
             us_backlog.save()
             messages.success(request,'US añadido')
         else:
