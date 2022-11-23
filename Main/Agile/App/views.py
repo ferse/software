@@ -618,26 +618,47 @@ def sprint(request,id_sprint):
     }
     if request.method == 'POST':
         if request.POST['us'] != '0':
-            us = User_Story.objects.filter(id = request.POST['us']).first()
-            us_backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_us = us).first()
-            us_backlog.id_sprint = sprint
-            us_backlog.prioridad = request.POST['prioridad']
-            us_backlog.save()
-            messages.success(request,'US añadido')
+            to_do = Estado_Sprint.objects.filter(id = 1).first()
+            if sprint.id_estado_sprint == to_do:
+                us = User_Story.objects.filter(id = request.POST['us']).first()
+                us_backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_us = us).first()
+                us_backlog.id_sprint = sprint
+                us_backlog.prioridad = request.POST['prioridad']
+                us_backlog.save()
+                messages.success(request,'US añadido')
+            else:
+                messages.error(request,"Sprint en curso o finalizado.")    
         else:
-            messages.error(request,'Seleccione un US')
-        return redirect('sprint',id_sprint)
+            messages.error(request,'Seleccione un US') 
+        return redirect('sprint',id_sprint)            
     return render(request,'App/sprint.html', context=context)
 
 def esprint(request,id_backlog):
     us = Backlog.objects.filter(id = id_backlog).first()
-    aux = us.id_sprint.id
-    us.id_sprint = None
-    us.save()
-    messages.success(request,'US eliminado')
+    aux = us.id_sprint.id   
+    to_do = Estado_Sprint.objects.filter(id = 1).first()
+    if us.id_sprint.id_estado_sprint == to_do:
+        us.id_sprint = None
+        us.save()
+        messages.success(request,'US eliminado')
+    else:
+        messages.error(request,"Sprint en curso o finalizado.") 
     return redirect('sprint',aux)
-def dashboard(request):
-    return render(request,'App/dashboard.html')
+    
+def burndown(request, id_proyecto):
+    proyecto = buscar_proyecto(id_proyecto)
+    sprints = Sprint.objects.filter(id_proyecto = proyecto).all().order_by("fecha_inicio")
+    us_finalizados = [Backlog.objects.filter(id_proyecto = proyecto).all().count()]
+    done = Estado_Us.objects.filter(id = 3).first()
+    for sprint in sprints:
+        aux = us_finalizados[-1] - Backlog.objects.filter(id_sprint = sprint, id_estado = done).all().count()
+        us_finalizados.append(aux)
+    context = {
+        'proyecto' : proyecto,
+        'sprints' : sprints,
+        'us_finalizados' : us_finalizados,
+    }
+    return render(request,'App/burndown.html', context=context)
 
 #Crear Permiso
 def apermiso(request):
