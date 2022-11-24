@@ -5,8 +5,9 @@ from App.models import Usuario
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from .models import Sprint, Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso
+from .models import Sprint, Backlog, Comentario_Us, Usuario, Permiso, Rol, Usuario_Proyecto, Usuario_Rol, User_Story, Estado_Us, Proyecto, Estado_Proyecto, Rol_Permiso, Estado_Sprint
 from datetime import datetime, date, timedelta
+import time
 
 def validarPermisos(request, permiso):
     rolusuario = listar_usurol(request.user.id)
@@ -546,7 +547,7 @@ def asprint(request):
         if request.POST['proyecto'] != '0':
             descripcion = request.POST['descripcion']
             fecha_inicio = datetime.date(datetime.strptime(request.POST['fecha_inicio'],'%Y-%m-%d'))
-
+            id_estado_sprints = Estado_Sprint.objects.filter(id=1).first() 
             if request.POST['duracion']=="":
                 duracion = 14
             else:
@@ -558,6 +559,7 @@ def asprint(request):
                 duracion=duracion,
                 fecha_inicio=fecha_inicio, 
                 fecha_fin=fecha_inicio + timedelta(days=duracion),
+                id_estado_sprint=id_estado_sprints,
                 )
             sprint.save()
         else:
@@ -682,3 +684,42 @@ def bpermiso(request, nombre, aux):
         perm.delete()
         return redirect('permisos')
     return render(request,'paginas/bpermiso.html',{'nombre':nombre})
+    
+# verifica cada dia si el sprint vencio
+def Sprint_Check():
+    estado = Estado_Sprint.objects.filter(id=2).first()
+    sprint_aux = Sprint.objects.filter(id_estado_sprint=estado).all()
+   
+    for i in sprint_aux:
+        if datetime.now() == i.fecha_fin :
+            i.id_estado_sprint = Estado_Sprint.objects.filter(id=3).first()
+            i.save()
+            estado_pendiente=Estado_Sprint.objets.filter(id=1).first()
+            sprint_pendiente = Sprint.objects.filter(id_estado_sprint=estado_pendiente).all()
+
+            for j in sprint_pendiente:
+                UserS = User_Story.objects.filter(id = id_user_story, id_sprint = j.id  ).first()
+
+                if  i.id_proyecto == j.id_proyecto and j.fecha_fin > i.fecha_fin:
+             
+                    us = User_Story.objects.filter(id = request.POST['us']).first()
+                    us_backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_us = us).first()
+                    us_backlog.id_sprint = sprint
+                    us_backlog.save()
+                    sprint = Sprint(
+                        id_proyecto     =i.id_proyecto,
+                        descripcion     =i.descripcion, 
+                        fecha_inicio    =datetime.now(), 
+                        fecha_fin       =i.fecha_inicio + timedelta(days=14),
+                        id_estado_sprint=Estado_Sprint.objets.filter(id=2).first(),
+                    )
+                    sprint.save()
+
+                    
+                    
+# # corre la funcion de arriba cada 24hs                    
+# while True:
+    # Sprint_Check()
+    # time.sleep(86400)
+  
+  
