@@ -14,6 +14,7 @@ pip install -r .\requirements.txt
 
 ## Iniciar el proyecto en modo DEV
 
+cd .\Main
 cd .\Agile
 python manage.py makemigrations
 python manage.py migrate
