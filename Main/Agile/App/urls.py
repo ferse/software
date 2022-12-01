@@ -43,4 +43,5 @@ urlpatterns = [
     path('apermiso', views.apermiso, name='apermiso'),
     path('mpermiso/<str:nombre>', views.mpermiso, name='mpermiso'),
     path('bpermiso/<str:nombre>/<str:aux>', views.bpermiso, name='bpermiso'),
+    path('isprint/<int:spr>', views.iniciar_sprint, name="isprint"),
 ]

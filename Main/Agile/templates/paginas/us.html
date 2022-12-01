@@ -35,7 +35,7 @@
             <th scope="row"><a class="text-dark" href="{% url 'userstory' u.id %}">{{u.nombre}}</a></th>
             <td>{{u.descripcion}}</td>
             <td>{{u.prioridad}}</td>
-            <td>{{u.id_sprint}}</td>
+            <td>{{u.id_sprint.descripcion}}</td>
             <td>{{u.id_estado.descripcion}}</td>
             <td>{{u.id_usuario.nombre}} {{u.id_usuario.apellido}}</td>
             <td>{{u.fecha_creacion}}</td>

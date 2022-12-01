@@ -17,6 +17,7 @@
                     <th>Proyecto</th>
                     <th>Fecha Inicio</th>
                     <th>Fecha Fin</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -27,9 +28,11 @@
                     <td>{{ S.id_proyecto.nombre }}</td>
                     <td>{{ S.fecha_inicio }}</td>
                     <td>{{ S.fecha_fin }}</td>
+                    <td>{{ S.id_estado_sprint.descripcion }}</td>
                     <td>
                         <a name="" id="" class="btn btn-info" href="msprint/{{S.id}}" role="button">Modificar</a>
                         <a name="" id="" class="btn btn-primary" href="{% url 'sprint' S.id %}" role="button">Backlog</a>
+                        <a name="" id="" class="btn btn-success" href="{% url 'isprint' S.id %}" role="button">Iniciar</a>
                     </td>
                 </tr>
                 {% endfor %}
