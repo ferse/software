@@ -44,6 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'App',
+    'django_cron',
+]
+
+CRON_CLASSES = [
+    'App.cron.Cron',
 ]
 
 MIDDLEWARE = [

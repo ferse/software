@@ -566,6 +566,19 @@ def asprint(request):
                 fecha_inicio=fecha_inicio, 
                 fecha_fin=fecha_inicio + timedelta(days=duracion),
                 )
+
+            # verifica el estado del sprint
+            hoy = datetime.now().date()
+            if hoy >= fecha_inicio and hoy <= fecha_fin:
+                estado = Estado_Sprint.objects.filter(id=2).first()  # Doing
+                sprint.id_estado_sprint = estado
+            elif fecha_inicio < hoy and fecha_fin < hoy:
+                estado = Estado_Sprint.objects.filter(id=3).first()  # Done
+                sprint.id_estado_sprint = estado
+            else:
+                estado = Estado_Sprint.objects.filter(id=1).first()  # To do
+                sprint.id_estado_sprint = estado
+
             sprint.save()
         else:
             messages.error(request,'Seleccione un proyecto')
@@ -601,7 +614,19 @@ def msprint(request, spr):
             duracion = 14
         else:
             duracion = int(request.POST['duracion'])
-        sprint_edit.fecha_fin = sprint_edit.fecha_inicio + timedelta(days=duracion),   
+        sprint_edit.fecha_fin = sprint_edit.fecha_inicio + timedelta(days=duracion)
+
+        # verifica el estado del sprint
+        hoy = datetime.now().date()
+        if hoy >= sprint_edit.fecha_inicio and hoy <= sprint_edit.fecha_fin:
+            estado = Estado_Sprint.objects.filter(id=2).first()  # Doing
+            sprint_edit.id_estado_sprint = estado
+        elif sprint_edit.fecha_inicio < hoy and sprint_edit.fecha_fin < hoy:
+            estado = Estado_Sprint.objects.filter(id=3).first()  # Done
+            sprint_edit.id_estado_sprint = estado
+        else:
+            estado = Estado_Sprint.objects.filter(id=1).first()  # To do
+            sprint_edit.id_estado_sprint = estado
          
         sprint_edit.save()
         return redirect('sprints', id_proyecto = 0)           
@@ -711,3 +736,26 @@ def bpermiso(request, nombre, aux):
         perm.delete()
         return redirect('permisos')
     return render(request,'paginas/bpermiso.html',{'nombre':nombre})
+
+#Iniciar Sprint
+def iniciar_sprint(request, spr):
+    sprint = bsprint(spr)
+    datos={
+        'descripcion':sprint.descripcion,
+        'duracion':sprint.duracion,
+    }
+    if request.method == 'POST':
+        sprint.descripcion = request.POST['descripcion']
+        sprint.fecha_inicio = datetime.now().date()
+
+        if request.POST['duracion']=="":
+            duracion = 14
+        else:
+            duracion = int(request.POST['duracion'])
+        sprint.fecha_fin = sprint.fecha_inicio + timedelta(days=duracion)
+
+        estado = Estado_Sprint.objects.filter(id=2).first()  # Doing
+        sprint.id_estado_sprint = estado
+        sprint.save()
+        return redirect('sprints', id_proyecto=0)
+    return render(request,"app/isprint.html",datos)
