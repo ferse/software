@@ -5,7 +5,12 @@
     <div id="ui-view" style="opacity: 1;">
         {% if messages %}
             {% for message in messages %}
-                <p>{{message}}</p>
+                {% if message.tags == 'error' %} 
+                    <p style="color:red">{{message}}</p>
+                {% endif %}
+                {% if message.tags == 'success' %} 
+                    <p style="color:green">{{message}}</p>
+                {% endif %}
             {% endfor %}
         {% endif %}
         <div class="animated fadeIn">
@@ -22,10 +27,10 @@
                             <div class="col">
                                 <div class="card">
                                     <div class="card-body">
-                                        <a href="{% url 'userstory' us.id %}"><h6 class="card-title text-dark">{{us.nombre}}</h6></a>
-                                        <p class="card-text text-justify">Descripcion: {{us.descripcion}}</p>
+                                        <a href="{% url 'userstory' us.id_us.id %}"><h6 class="card-title text-dark">{{us.id_us.nombre}}</h6></a>
+                                        <p class="card-text text-justify">Descripcion: {{us.id_us.descripcion}}</p>
                                         <p class="card-text">Prioridad: {{us.prioridad}}</p>
-                                        <form action="/kanban" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="estado" value="1">
                                             <input type="hidden" name="id_us" value="{{us.id}}">
@@ -34,7 +39,7 @@
                                                 <select class="form-select" name="usuario" id="usuario">
                                                     <option value="0" selected>Seleccione Usuario</option>
                                                     {% for usuario in usuarios %}
-                                                        <option value="{{usuario.id}}">{{usuario.nombre}} {{usuario.apellido}}</option>
+                                                        <option value="{{usuario.id}}">{{usuario.id_usuario.nombre}} {{usuario.id_usuario.apellido}}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
@@ -63,13 +68,13 @@
                             <div class="col">
                                 <div class="card">
                                     <div class="card-body">
-                                        <a href="#"><h6 class="card-title text-dark">{{us.nombre}}</h6></a>
-                                        <p class="card-text text-justify">Descripcion: {{us.descripcion}}</p>
+                                        <a href="#"><h6 class="card-title text-dark">{{us.id_us.nombre}}</h6></a>
+                                        <p class="card-text text-justify">Descripcion: {{us.id_us.descripcion}}</p>
                                         <p class="card-text">
                                             Prioridad: {{us.prioridad}}<br>
                                             Asignado a: {{us.id_usuario.nombre}} {{us.id_usuario.apellido}}
                                         </p>
-                                        <form action="/kanban" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="estado" value="2">
                                             <input type="hidden" name="id_us" value="{{us.id}}">
@@ -98,8 +103,8 @@
                             <div class="col">
                                 <div class="card">
                                     <div class="card-body">
-                                        <a href="#"><h6 class="card-title text-dark">{{us.nombre}}</h6></a>
-                                        <p class="card-text text-justify">Descripcion: {{us.descripcion}}</p>
+                                        <a href="#"><h6 class="card-title text-dark">{{us.id_us.nombre}}</h6></a>
+                                        <p class="card-text text-justify">Descripcion: {{us.id_us.descripcion}}</p>
                                         <p class="card-text">
                                             Prioridad: {{us.prioridad}}<br>
                                             Asignado a: {{us.id_usuario.nombre}} {{us.id_usuario.apellido}}

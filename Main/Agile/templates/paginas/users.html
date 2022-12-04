@@ -16,11 +16,7 @@
                     <th>Usuario</th>
                     <th>Email</th>
                     <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>date_joined</th>
-                    <th>last_login</th>
-                    <th>is_admin</th>
-                    <th>is_active</th>
+                    <th>Apellido</th> 
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -31,10 +27,6 @@
                     <td>{{ Usuario.email }}</td>
                     <td>{{ Usuario.nombre }}</td>
                     <td>{{ Usuario.apellido }}</td>
-                    <td>{{ Usuario.date_joined }}</td>
-                    <td>{{ Usuario.last_login }}</td>
-                    <td>{{ Usuario.is_admin }}</td>
-                    <td>{{ Usuario.is_active }}</td>
                     <td>
                         <a name="" id="" class="btn btn-info" href="{% url 'musuario' Usuario.alias %}" role="button">Modificar</a>
                         <a name="" id="" class="btn btn-warning" href="{% url 'usurol' Usuario.alias %}" role="button">Rol</a>

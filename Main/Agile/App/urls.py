@@ -4,9 +4,8 @@ from . import views
 
 urlpatterns = [
     path('home', views.home, name='home'),
-    path('dashboard', views.dashboard, name='dashboard'),
+    path('burndown/<int:id_proyecto>', views.burndown, name='burndown'),
     path('', views.logear, name='logear'),
-    path('dashboard', views.home, name='dashboard'),
     path('users', views.usuarios, name='users'),
     path('permisos', views.permisos, name='permisos'),
     path('roles', views.roles, name='roles'),
@@ -34,7 +33,7 @@ urlpatterns = [
     path('backlog/<int:id_proyecto>', views.backlog, name='backlog'),
     path('backlogs', views.backlogs, name='backlogs'),
     path('eus/<int:id_proyecto>/<int:id_us>/<str:aux>', views.eus, name='eus'),
-    path('kanban', views.kanban, name='kanban'),
+    path('kanban/<int:id_proyecto>', views.kanban, name='kanban'),
     path('proyecto/<int:id>', views.proyecto, name='proyecto'),
     path('miembro/<int:id>', views.miembro, name='miembro'),
     path('bmiembro/<int:id_proyecto>/<int:id_usuario>', views.bmiembro, name='bmiembro'),
