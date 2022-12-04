@@ -28,8 +28,13 @@
                     <td>{{ S.fecha_inicio }}</td>
                     <td>{{ S.fecha_fin }}</td>
                     <td>
-                        <a name="" id="" class="btn btn-info" href="msprint/{{S.id}}" role="button">Modificar</a>
-                        <a name="" id="" class="btn btn-primary" href="{% url 'sprint' S.id %}" role="button">Backlog</a>
+                        {% if modificar == True %}
+                            <a name="" id="" class="btn btn-info" href="msprint/{{S.id}}" role="button">Modificar</a>
+                        {% endif %}
+
+                        {% if eliminar == True %}
+                            <a name="" id="" class="btn btn-primary" href="{% url 'sprint' S.id %}" role="button">Backlog</a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
