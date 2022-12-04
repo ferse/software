@@ -5,7 +5,9 @@
 
 <div class="card">
     <div class="card-header">
-        <a name="" id="" class="btn btn-success" href="{% url 'crol' %}" role="button">Agregar nuevo Rol</a>
+        {% if nuevo == True %}
+            <a name="" id="" class="btn btn-success" href="{% url 'crol' %}" role="button">Agregar nuevo Rol</a>
+        {% endif %}
     </div>
     <div class="card-body">
         <h4 class="card-title">Roles</h4>
@@ -24,8 +26,13 @@
                     <td>{{ Rol.nombre }}</td>
                     <td>{{ Rol.descripcion }}</td>
                     <td>
-                        <a name="" id="" class="btn btn-info" href="mrol/{{Rol.id}}" role="button">Modificar</a>
-                        <a name="" id="" class="btn btn-danger" href="erol/{{Rol.id}}/baja" role="button">Eliminar</a>
+                        {% if modificar == True %}
+                            <a name="" id="" class="btn btn-info" href="mrol/{{Rol.id}}" role="button">Modificar</a>
+                        {% endif %}
+
+                        {% if eliminar == True %}
+                            <a name="" id="" class="btn btn-danger" href="erol/{{Rol.id}}/baja" role="button">Eliminar</a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

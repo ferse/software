@@ -8,16 +8,18 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <form action="" method="post">
-                {% csrf_token %}
-                <select class="form-select" name="us" id="us">
-                  <option value="0" selected>Añadir User Story: </option>
-                  {% for us in user_story %}
-                    <option value="{{us.id}}">{{us.nombre}}</option>
-                  {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-success">Añadir</button>
-              </form>
+              {% if nuevo == True %}
+                <form action="" method="post">
+                  {% csrf_token %}
+                  <select class="form-select" name="us" id="us">
+                    <option value="0" selected>Añadir User Story: </option>
+                    {% for us in user_story %}
+                      <option value="{{us.id}}">{{us.nombre}}</option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit" class="btn btn-success">Añadir</button>
+                </form>
+              {% endif %}
             </div>            
             <div class="card-body">   
               <div class="card-title">
@@ -55,7 +57,9 @@
                       <td>{{us.id_estado.descripcion}}</td>
                       <td>{{us.id_usuario.nombre}} {{us.id_usuario.apellido}}</td>
                       <td>
-                        <a name="" id="" class="btn btn-danger" href="{% url 'eus' us.id_proyecto.id us.id_us.id 'baja'%}" role="button">Eliminar</a>
+                        {% if eliminar == True %}
+                          <a name="" id="" class="btn btn-danger" href="{% url 'eus' us.id_proyecto.id us.id_us.id 'baja'%}" role="button">Eliminar</a>
+                        {% endif %}
                       </td>
                     </tr>
                   {% endfor %}

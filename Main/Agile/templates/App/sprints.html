@@ -30,9 +30,19 @@
                     <td>{{ S.fecha_fin }}</td>
                     <td>{{ S.id_estado_sprint.descripcion }}</td>
                     <td>
-                        <a name="" id="" class="btn btn-info" href="msprint/{{S.id}}" role="button">Modificar</a>
+
+                        {% if modificar == True %}
+                            <a name="" id="" class="btn btn-info" href="msprint/{{S.id}}" role="button">Modificar</a>
+                        {% endif %}
+
+                        {% if eliminar == True %}
                         <a name="" id="" class="btn btn-primary" href="{% url 'sprint' S.id %}" role="button">Backlog</a>
+                        {% endif %}
+
+                        {% if eliminar == True %}
                         <a name="" id="" class="btn btn-success" href="{% url 'isprint' S.id %}" role="button">Iniciar</a>
+                        {% endif %}
+
                     </td>
                 </tr>
                 {% endfor %}

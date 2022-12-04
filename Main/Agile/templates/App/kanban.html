@@ -30,6 +30,8 @@
                                         <a href="{% url 'userstory' us.id_us.id %}"><h6 class="card-title text-dark">{{us.id_us.nombre}}</h6></a>
                                         <p class="card-text text-justify">Descripcion: {{us.id_us.descripcion}}</p>
                                         <p class="card-text">Prioridad: {{us.prioridad}}</p>
+
+                                        {% if modificar == True %}
                                         <form action="" method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="estado" value="1">
@@ -49,6 +51,8 @@
                                             </div>
                                             <input type="submit" class="btn btn-success" style="float: right;" value="Mover -->">    
                                         </form>
+                                        {% endif %}
+
                                     </div>
                                 </div>
                             </div>
@@ -74,6 +78,8 @@
                                             Prioridad: {{us.prioridad}}<br>
                                             Asignado a: {{us.id_usuario.nombre}} {{us.id_usuario.apellido}}
                                         </p>
+
+                                        {% if modificar == True %}
                                         <form action="" method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="estado" value="2">
@@ -84,6 +90,7 @@
                                             </div>
                                             <input type="submit" class="btn btn-success" style="float: right;" value="Mover -->">    
                                         </form>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>

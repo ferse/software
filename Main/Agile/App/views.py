@@ -47,8 +47,17 @@ def logear(request):
 
 #Retorna todos los usuarios de la base de datos
 def usuarios(request):
+    if not validarPermisos(request, 'LISTAR_USUARIO'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_USUARIO')
+    modificar = validarPermisos(request, 'MODIFICAR_USUARIO')
+    eliminar = validarPermisos(request, 'ELIMINAR_USUARIO')
+    rol = validarPermisos(request, 'ROL_USUARIO')
+
     usuarios = Usuario.objects.all()
-    return render(request, 'paginas/users.html', {'usuarios': usuarios})
+    return render(request, 'paginas/users.html', {'usuarios': usuarios, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar, 'rol': rol})
+
 #Retorna todos los permisos de la base de datos
 def permisos(request):
     if not validarPermisos(request, 'LISTAR_PERMISO'):
@@ -63,8 +72,16 @@ def permisos(request):
     return render(request, 'paginas/permisos.html', {'permisos': permisos, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 #Retorna todos los roles de la base de datos
 def roles(request):
+
+    if not validarPermisos(request, 'LISTAR_ROL'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_ROL')
+    modificar = validarPermisos(request, 'MODIFICAR_ROL')
+    eliminar = validarPermisos(request, 'ELIMINAR_ROL')
+
     roles = Rol.objects.all()
-    return render(request, 'paginas/roles.html', {'roles': roles})
+    return render(request, 'paginas/roles.html', {'roles': roles, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 
 def salir(request):
     logout(request)
@@ -378,8 +395,16 @@ def eliminar_permisos(rol_edit):
         a.delete()
 #Retorna todos los proyectos de la base de datos
 def proyectos(request):
+
+    if not validarPermisos(request, 'LISTAR_PROYECTO'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_PROYECTO')
+    modificar = validarPermisos(request, 'MODIFICAR_PROYECTO')
+    eliminar = validarPermisos(request, 'ELIMINAR_PROYECTO')
+
     proyectos = Proyecto.objects.all()
-    return render(request, 'proyectos/index.html', {'proyectos': proyectos})
+    return render(request, 'proyectos/index.html', {'proyectos': proyectos, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 
 #Crear Proyecto
 def aproyecto(request):
@@ -438,11 +463,20 @@ def eproy(request, nombre, aux):
     return render(request,'proyectos/eliminar.html',{'nombre':nombre})
 
 def backlogs(request):
+
+    if not validarPermisos(request, 'LISTAR_BACKLOG'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_BACKLOG')
+    modificar = validarPermisos(request, 'MODIFICAR_BACKLOG')
+    eliminar = validarPermisos(request, 'ELIMINAR_BACKLOG')
+    
     backlogs = Backlog.objects.values('id_proyecto').distinct()
     proyectos = []
     for b in backlogs:
         proyectos.append(buscar_proyecto(b['id_proyecto']))
-    return render(request,'paginas/backlogs.html',{'proyectos':proyectos})
+    
+    return render(request,'paginas/backlogs.html',{'proyectos':proyectos, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 
 def sprint_activo(id_proyecto):
     estado = Estado_Sprint.objects.filter(id=2).first()
@@ -453,13 +487,28 @@ def listar_us_sprint_activo(id_proyecto):
     sprint = sprint_activo(id_proyecto)
     return Backlog.objects.filter(id_sprint = sprint).all()
 
-def kanban(request, id_proyecto):
-    user_story = listar_us_sprint_activo(id_proyecto)
-    usuarios = integrantes_proyecto(id_proyecto)
+def kanban(request):
+
+    if not validarPermisos(request, 'LISTAR_KANBAN'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_KANBAN')
+    modificar = validarPermisos(request, 'MODIFICAR_KANBAN')
+    eliminar = validarPermisos(request, 'ELIMINAR_KANBAN')
+    mover_us = validarPermisos(request, 'MOVER_US_KANBAN')
+    
+    user_story = listar_us()
+    usuarios = Usuario.objects.all()
+
     context = {
         'user_story' : user_story,
         'usuarios' : usuarios,
+        'nuevo': nuevo,
+        'modificar': modificar,
+        'eliminar': eliminar,
+        'mover_us': mover_us,
     }
+
     if request.method == 'POST':
         sprint = sprint_activo(id_proyecto)
         us = buscar_us(request.POST['id_us'])
@@ -534,14 +583,24 @@ def bmiembro(request,id_proyecto,id_usuario):
     return redirect('miembro',id_proyecto)
 
 def userstory(request,id_us):
+
+    if not validarPermisos(request, 'LISTAR_USER_STORY'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_USER_STORY')
+    modificar = validarPermisos(request, 'MODIFICAR_USER_STORY')
+    eliminar = validarPermisos(request, 'ELIMINAR_USER_STORY')
+
     us = buscar_us(id_us)
     comentarios = Comentario_Us.objects.filter(id_user_story=id_us).all()
     context = {
         'us' : us,
         'comentarios' : comentarios,
+        'nuevo': nuevo,
+        'modificar': modificar,
+        'eliminar': eliminar,
     }
     return render(request,'App/userstory.html',context=context)
-    
         
 #Crear SPRINT
 def asprint(request):
@@ -588,12 +647,20 @@ def asprint(request):
     
 #Lista los sprints existentes
 def sprints(request,id_proyecto):
+
+    if not validarPermisos(request, 'LISTAR_SPRINT'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_SPRINT')
+    modificar = validarPermisos(request, 'MODIFICAR_SPRINT')
+    eliminar = validarPermisos(request, 'ELIMINAR_SPRINT')
+
     if id_proyecto != 0:
         proyecto = buscar_proyecto(id_proyecto)
         sprint = Sprint.objects.filter(id_proyecto=proyecto).all()
     else:
         sprint = Sprint.objects.all()
-    return render(request, 'App/sprints.html', {'sprint': sprint})
+    return render(request, 'App/sprints.html', {'sprint': sprint, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 
 def bsprint(spr):
     id = Sprint.objects.filter(id=spr).first()
