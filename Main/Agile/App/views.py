@@ -654,13 +654,15 @@ def sprints(request,id_proyecto):
     nuevo = validarPermisos(request, 'NUEVO_SPRINT')
     modificar = validarPermisos(request, 'MODIFICAR_SPRINT')
     eliminar = validarPermisos(request, 'ELIMINAR_SPRINT')
+    iniciar = validarPermisos(request, 'INICIAR_SPRINT')
+    backlog = validarPermisos(request, 'BACKLOG_SPRINT')
 
     if id_proyecto != 0:
         proyecto = buscar_proyecto(id_proyecto)
         sprint = Sprint.objects.filter(id_proyecto=proyecto).all()
     else:
         sprint = Sprint.objects.all()
-    return render(request, 'App/sprints.html', {'sprint': sprint, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
+    return render(request, 'App/sprints.html', {'sprint': sprint, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar, 'iniciar': iniciar, 'backlog': backlog})
 
 def bsprint(spr):
     id = Sprint.objects.filter(id=spr).first()

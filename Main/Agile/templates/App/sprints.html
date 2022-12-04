@@ -35,11 +35,11 @@
                             <a name="" id="" class="btn btn-info" href="msprint/{{S.id}}" role="button">Modificar</a>
                         {% endif %}
 
-                        {% if eliminar == True %}
+                        {% if iniciar == True %}
                         <a name="" id="" class="btn btn-primary" href="{% url 'sprint' S.id %}" role="button">Backlog</a>
                         {% endif %}
 
-                        {% if eliminar == True %}
+                        {% if backlog == True %}
                         <a name="" id="" class="btn btn-success" href="{% url 'isprint' S.id %}" role="button">Iniciar</a>
                         {% endif %}
 
