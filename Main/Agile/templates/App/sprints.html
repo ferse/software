@@ -31,11 +31,13 @@
                     <td>{{ S.id_estado_sprint.descripcion }}</td>
                     <td>
 
+
                         {% if modificar == True %}
                             <a name="" id="" class="btn btn-info" href="msprint/{{S.id}}" role="button">Modificar</a>
                         {% endif %}
 
                         {% if iniciar == True %}
+
                         <a name="" id="" class="btn btn-primary" href="{% url 'sprint' S.id %}" role="button">Backlog</a>
                         {% endif %}
 
