@@ -493,7 +493,7 @@ def listar_us_sprint_activo(id_proyecto):
     sprint = sprint_activo(id_proyecto)
     return Backlog.objects.filter(id_sprint = sprint).all()
 
-def kanban(request):
+def kanban(request,id_proyecto):
 
     if not validarPermisos(request, 'LISTAR_KANBAN'):
         return redirect('home')
@@ -503,8 +503,8 @@ def kanban(request):
     eliminar = validarPermisos(request, 'ELIMINAR_KANBAN')
     mover_us = validarPermisos(request, 'MOVER_US_KANBAN')
     
-    user_story = listar_us()
-    usuarios = Usuario.objects.all()
+    user_story = listar_us_sprint_activo(id_proyecto)
+    usuarios = integrantes_proyecto(id_proyecto)
 
     context = {
         'user_story' : user_story,
