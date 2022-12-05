@@ -10,6 +10,7 @@ from datetime import datetime, date, timedelta
 import time
 
 def validarPermisos(request, permiso):
+    #return True
     rolusuario = listar_usurol(request.user.id)
     result = False
     for rol in rolusuario:
@@ -205,6 +206,10 @@ def comprobar_fecha(usu, desde, hasta):
 
 #Crear Rol
 def crol(request):
+
+    if not validarPermisos(request, 'NUEVO_ROL'):
+        return redirect('home')
+
     permisos = listar_permisos()
     if request.method == 'POST':
         nombre      = request.POST['nombre']
