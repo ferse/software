@@ -13,7 +13,9 @@
   {% endif %}
   <div class="card">
     <div class="card-header">
-      <a href="{% url 'aus' %}" class="btn btn-primary" >Crear User Story</a>
+      {% if nuevo == True %}
+        <a href="{% url 'aus' %}" class="btn btn-primary" >Crear User Story</a>
+      {% endif %}
     </div>
     <div class="card-body">
       <table class="table">
@@ -21,10 +23,6 @@
         <tr>
           <th scope="col">Nombre</th>
           <th scope="col">Descripcion</th>
-          <th scope="col">Prioridad</th>
-          <th scope="col">Sprint</th>
-          <th scope="col">Estado</th>
-          <th scope="col">Usuario</th>
           <th scope="col">Fecha Creacion</th>
           <th scope="col">Acciones</th>
         </tr>
@@ -35,11 +33,19 @@
             <th scope="row"><a class="text-dark" href="{% url 'userstory' u.id %}">{{u.nombre}}</a></th>
             <td>{{u.descripcion}}</td>
             <td>{{u.prioridad}}</td>
-            <td>{{u.id_sprint}}</td>
+            <td>{{u.id_sprint.descripcion}}</td>
             <td>{{u.id_estado.descripcion}}</td>
             <td>{{u.id_usuario.nombre}} {{u.id_usuario.apellido}}</td>
             <td>{{u.fecha_creacion}}</td>
-            <td><a class="btn btn-info" href="mus/{{u.id}}">Modificar</a><a class="btn btn-danger" href="bus/{{u.id}}/baja">Eliminar</a></td>
+            <td>
+            {% if modificar == True %}
+              <a class="btn btn-info" href="mus/{{u.id}}">Modificar</a>
+            {% endif %}
+
+            {% if eliminar == True %}
+              <a class="btn btn-danger" href="bus/{{u.id}}/baja">Eliminar</a>
+            {% endif %}
+          </td>
           </tr>
         {% endfor %}
       </tbody>

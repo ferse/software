@@ -48,8 +48,17 @@ def logear(request):
 
 #Retorna todos los usuarios de la base de datos
 def usuarios(request):
+    if not validarPermisos(request, 'LISTAR_USUARIO'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_USUARIO')
+    modificar = validarPermisos(request, 'MODIFICAR_USUARIO')
+    eliminar = validarPermisos(request, 'ELIMINAR_USUARIO')
+    rol = validarPermisos(request, 'ROL_USUARIO')
+
     usuarios = Usuario.objects.all()
-    return render(request, 'paginas/users.html', {'usuarios': usuarios})
+    return render(request, 'paginas/users.html', {'usuarios': usuarios, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar, 'rol': rol})
+
 #Retorna todos los permisos de la base de datos
 def permisos(request):
     if not validarPermisos(request, 'LISTAR_PERMISO'):
@@ -64,8 +73,16 @@ def permisos(request):
     return render(request, 'paginas/permisos.html', {'permisos': permisos, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 #Retorna todos los roles de la base de datos
 def roles(request):
+
+    if not validarPermisos(request, 'LISTAR_ROL'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_ROL')
+    modificar = validarPermisos(request, 'MODIFICAR_ROL')
+    eliminar = validarPermisos(request, 'ELIMINAR_ROL')
+
     roles = Rol.objects.all()
-    return render(request, 'paginas/roles.html', {'roles': roles})
+    return render(request, 'paginas/roles.html', {'roles': roles, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 
 def salir(request):
     logout(request)
@@ -248,15 +265,10 @@ def aus(request):
         descripcion = request.POST['descripcion']
         #La fecha de cracion carga automaticamente la fecha actual
         fecha_creacion = datetime.today().strftime('%Y-%m-%d')
-        #Estado por defecto es TO DO
-        estado = Estado_Us.objects.filter(descripcion='To Do').first()
         us = User_Story(
             nombre = nombre,
             descripcion = descripcion,
-            fecha_creacion = fecha_creacion,
-            #Prioridad por defecto es 0
-            prioridad = 0,
-            id_estado = estado
+            fecha_creacion = fecha_creacion
             )
         us.save()
         messages.success(request,'User Story creado exitosamente')
@@ -384,8 +396,16 @@ def eliminar_permisos(rol_edit):
         a.delete()
 #Retorna todos los proyectos de la base de datos
 def proyectos(request):
+
+    if not validarPermisos(request, 'LISTAR_PROYECTO'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_PROYECTO')
+    modificar = validarPermisos(request, 'MODIFICAR_PROYECTO')
+    eliminar = validarPermisos(request, 'ELIMINAR_PROYECTO')
+
     proyectos = Proyecto.objects.all()
-    return render(request, 'proyectos/index.html', {'proyectos': proyectos})
+    return render(request, 'proyectos/index.html', {'proyectos': proyectos, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 
 #Crear Proyecto
 def aproyecto(request):
@@ -444,44 +464,80 @@ def eproy(request, nombre, aux):
     return render(request,'proyectos/eliminar.html',{'nombre':nombre})
 
 def backlogs(request):
+
+    if not validarPermisos(request, 'LISTAR_BACKLOG'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_BACKLOG')
+    modificar = validarPermisos(request, 'MODIFICAR_BACKLOG')
+    eliminar = validarPermisos(request, 'ELIMINAR_BACKLOG')
+    
     backlogs = Backlog.objects.values('id_proyecto').distinct()
     proyectos = []
     for b in backlogs:
         proyectos.append(buscar_proyecto(b['id_proyecto']))
-    return render(request,'paginas/backlogs.html',{'proyectos':proyectos})
+    
+    return render(request,'paginas/backlogs.html',{'proyectos':proyectos, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
+
+def sprint_activo(id_proyecto):
+    estado = Estado_Sprint.objects.filter(id=2).first()
+    proyecto = buscar_proyecto(id_proyecto)
+    return Sprint.objects.filter(id_proyecto = proyecto, id_estado_sprint = estado).first()
+
+def listar_us_sprint_activo(id_proyecto):
+    sprint = sprint_activo(id_proyecto)
+    return Backlog.objects.filter(id_sprint = sprint).all()
 
 def kanban(request):
+
+    if not validarPermisos(request, 'LISTAR_KANBAN'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_KANBAN')
+    modificar = validarPermisos(request, 'MODIFICAR_KANBAN')
+    eliminar = validarPermisos(request, 'ELIMINAR_KANBAN')
+    mover_us = validarPermisos(request, 'MOVER_US_KANBAN')
+    
     user_story = listar_us()
     usuarios = Usuario.objects.all()
+
     context = {
         'user_story' : user_story,
         'usuarios' : usuarios,
+        'nuevo': nuevo,
+        'modificar': modificar,
+        'eliminar': eliminar,
+        'mover_us': mover_us,
     }
+
     if request.method == 'POST':
+        sprint = sprint_activo(id_proyecto)
         us = buscar_us(request.POST['id_us'])
+        us_backlog = Backlog.objects.filter(id_sprint = sprint, id_us = us).first()
         if request.POST['estado'] == '1':
             if request.POST['usuario'] != '0':               
                usuario = Usuario.objects.filter(id = request.POST['usuario']).first()
                estado = Estado_Us.objects.filter(id=2).first()
-               us.id_usuario = usuario
+               us_backlog.id_usuario = usuario
             else:
                 messages.error(request,'Debe asignar un usuario')
-                return redirect('kanban')
+                return redirect('kanban',id_proyecto)
         elif request.POST['estado'] == '2':
-            if us.id_usuario == request.user:
+            if us_backlog.id_usuario == request.user:
                 estado = Estado_Us.objects.filter(id=3).first()
             else:
                 messages.error(request,'No puede mover el US')
-                return redirect('kanban')
-        us.id_estado = estado
-        us.save()
-        if request.POST['comentario'] != ' ':
+                return redirect('kanban', id_proyecto)
+        us_backlog.id_estado = estado
+        us_backlog.save()
+        if request.POST['comentario'] != '':
             comentario = Comentario_Us(comentario=request.POST['comentario'],id_usuario=request.user,id_user_story=us)
             comentario.save()
     return render(request,'App/kanban.html',context=context)
 
 def integrantes_proyecto(id_proyecto):
-    return Usuario_Proyecto.objects.filter(id_proyecto=id_proyecto).all()
+    proyecto = buscar_proyecto(id_proyecto)
+    return Usuario_Proyecto.objects.filter(id_proyecto=proyecto).all()
 
 def buscar_integrante(id_proyecto,id_usuario):
     return Usuario_Proyecto.objects.filter(id_proyecto=id_proyecto,id_usuario=id_usuario).first()
@@ -528,14 +584,24 @@ def bmiembro(request,id_proyecto,id_usuario):
     return redirect('miembro',id_proyecto)
 
 def userstory(request,id_us):
+
+    if not validarPermisos(request, 'LISTAR_USER_STORY'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_USER_STORY')
+    modificar = validarPermisos(request, 'MODIFICAR_USER_STORY')
+    eliminar = validarPermisos(request, 'ELIMINAR_USER_STORY')
+
     us = buscar_us(id_us)
     comentarios = Comentario_Us.objects.filter(id_user_story=id_us).all()
     context = {
         'us' : us,
         'comentarios' : comentarios,
+        'nuevo': nuevo,
+        'modificar': modificar,
+        'eliminar': eliminar,
     }
     return render(request,'App/userstory.html',context=context)
-    
         
 #Crear SPRINT
 def asprint(request):
@@ -561,6 +627,19 @@ def asprint(request):
                 fecha_fin=fecha_inicio + timedelta(days=duracion),
                 id_estado_sprint=id_estado_sprints,
                 )
+
+            # verifica el estado del sprint
+            hoy = datetime.now().date()
+            if hoy >= fecha_inicio and hoy <= fecha_fin:
+                estado = Estado_Sprint.objects.filter(id=2).first()  # Doing
+                sprint.id_estado_sprint = estado
+            elif fecha_inicio < hoy and fecha_fin < hoy:
+                estado = Estado_Sprint.objects.filter(id=3).first()  # Done
+                sprint.id_estado_sprint = estado
+            else:
+                estado = Estado_Sprint.objects.filter(id=1).first()  # To do
+                sprint.id_estado_sprint = estado
+
             sprint.save()
         else:
             messages.error(request,'Seleccione un proyecto')
@@ -570,12 +649,22 @@ def asprint(request):
     
 #Lista los sprints existentes
 def sprints(request,id_proyecto):
+
+    if not validarPermisos(request, 'LISTAR_SPRINT'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_SPRINT')
+    modificar = validarPermisos(request, 'MODIFICAR_SPRINT')
+    eliminar = validarPermisos(request, 'ELIMINAR_SPRINT')
+    iniciar = validarPermisos(request, 'INICIAR_SPRINT')
+    backlog = validarPermisos(request, 'BACKLOG_SPRINT')
+
     if id_proyecto != 0:
         proyecto = buscar_proyecto(id_proyecto)
         sprint = Sprint.objects.filter(id_proyecto=proyecto).all()
     else:
         sprint = Sprint.objects.all()
-    return render(request, 'App/sprints.html', {'sprint': sprint})
+    return render(request, 'App/sprints.html', {'sprint': sprint, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar, 'iniciar': iniciar, 'backlog': backlog})
 
 def bsprint(spr):
     id = Sprint.objects.filter(id=spr).first()
@@ -596,7 +685,19 @@ def msprint(request, spr):
             duracion = 14
         else:
             duracion = int(request.POST['duracion'])
-        sprint_edit.fecha_fin = sprint_edit.fecha_inicio + timedelta(days=duracion),   
+        sprint_edit.fecha_fin = sprint_edit.fecha_inicio + timedelta(days=duracion)
+
+        # verifica el estado del sprint
+        hoy = datetime.now().date()
+        if hoy >= sprint_edit.fecha_inicio and hoy <= sprint_edit.fecha_fin:
+            estado = Estado_Sprint.objects.filter(id=2).first()  # Doing
+            sprint_edit.id_estado_sprint = estado
+        elif sprint_edit.fecha_inicio < hoy and sprint_edit.fecha_fin < hoy:
+            estado = Estado_Sprint.objects.filter(id=3).first()  # Done
+            sprint_edit.id_estado_sprint = estado
+        else:
+            estado = Estado_Sprint.objects.filter(id=1).first()  # To do
+            sprint_edit.id_estado_sprint = estado
          
         sprint_edit.save()
         return redirect('sprints', id_proyecto = 0)           
@@ -613,25 +714,47 @@ def sprint(request,id_sprint):
     }
     if request.method == 'POST':
         if request.POST['us'] != '0':
-            us = User_Story.objects.filter(id = request.POST['us']).first()
-            us_backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_us = us).first()
-            us_backlog.id_sprint = sprint
-            us_backlog.save()
-            messages.success(request,'US añadido')
+            to_do = Estado_Sprint.objects.filter(id = 1).first()
+            if sprint.id_estado_sprint == to_do:
+                us = User_Story.objects.filter(id = request.POST['us']).first()
+                us_backlog = Backlog.objects.filter(id_proyecto = sprint.id_proyecto, id_us = us).first()
+                us_backlog.id_sprint = sprint
+                us_backlog.prioridad = request.POST['prioridad']
+                us_backlog.save()
+                messages.success(request,'US añadido')
+            else:
+                messages.error(request,"Sprint en curso o finalizado.")    
         else:
-            messages.error(request,'Seleccione un US')
-        return redirect('sprint',id_sprint)
+            messages.error(request,'Seleccione un US') 
+        return redirect('sprint',id_sprint)            
     return render(request,'App/sprint.html', context=context)
 
 def esprint(request,id_backlog):
     us = Backlog.objects.filter(id = id_backlog).first()
-    aux = us.id_sprint.id
-    us.id_sprint = None
-    us.save()
-    messages.success(request,'US eliminado')
+    aux = us.id_sprint.id   
+    to_do = Estado_Sprint.objects.filter(id = 1).first()
+    if us.id_sprint.id_estado_sprint == to_do:
+        us.id_sprint = None
+        us.save()
+        messages.success(request,'US eliminado')
+    else:
+        messages.error(request,"Sprint en curso o finalizado.") 
     return redirect('sprint',aux)
-def dashboard(request):
-    return render(request,'App/dashboard.html')
+    
+def burndown(request, id_proyecto):
+    proyecto = buscar_proyecto(id_proyecto)
+    sprints = Sprint.objects.filter(id_proyecto = proyecto).all().order_by("fecha_inicio")
+    us_finalizados = [Backlog.objects.filter(id_proyecto = proyecto).all().count()]
+    done = Estado_Us.objects.filter(id = 3).first()
+    for sprint in sprints:
+        aux = us_finalizados[-1] - Backlog.objects.filter(id_sprint = sprint, id_estado = done).all().count()
+        us_finalizados.append(aux)
+    context = {
+        'proyecto' : proyecto,
+        'sprints' : sprints,
+        'us_finalizados' : us_finalizados,
+    }
+    return render(request,'App/burndown.html', context=context)
 
 #Crear Permiso
 def apermiso(request):
@@ -684,6 +807,30 @@ def bpermiso(request, nombre, aux):
         perm.delete()
         return redirect('permisos')
     return render(request,'paginas/bpermiso.html',{'nombre':nombre})
+
+#Iniciar Sprint
+def iniciar_sprint(request, spr):
+    sprint = bsprint(spr)
+    datos={
+        'descripcion':sprint.descripcion,
+        'duracion':sprint.duracion,
+    }
+    if request.method == 'POST':
+        sprint.descripcion = request.POST['descripcion']
+        sprint.fecha_inicio = datetime.now().date()
+
+        if request.POST['duracion']=="":
+            duracion = 14
+        else:
+            duracion = int(request.POST['duracion'])
+        sprint.fecha_fin = sprint.fecha_inicio + timedelta(days=duracion)
+
+        estado = Estado_Sprint.objects.filter(id=2).first()  # Doing
+        sprint.id_estado_sprint = estado
+        sprint.save()
+        return redirect('sprints', id_proyecto=0)
+    return render(request,"app/isprint.html",datos)
+
     
 # verifica cada dia si el sprint vencio
 def Sprint_Check():
@@ -721,5 +868,4 @@ def Sprint_Check():
 # while True:
     # Sprint_Check()
     # time.sleep(86400)
-  
-  
+

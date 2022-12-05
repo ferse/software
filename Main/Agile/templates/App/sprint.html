@@ -16,6 +16,19 @@
                     <option value="{{us.id_us.id}}">{{us.id_us.nombre}}</option>
                   {% endfor %}
                 </select>
+                Prioridad:
+                <select class="form-select" name="prioridad" id="prioridad">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
                 <button type="submit" class="btn btn-success">Añadir</button>
               </form>
             </div>            
@@ -50,10 +63,10 @@
                     <tr>
                       <th scope="row"><a class="text-dark" href="{% url 'userstory' us.id_us.id %}">{{us.id_us.nombre}}</a></th>
                       <td>{{us.id_us.descripcion}}</td>
-                      <td>{{us.id_us.prioridad}}</td>
+                      <td>{{us.prioridad}}</td>
                       <td>{{us.id_sprint.id}}</td>
-                      <td>{{us.id_us.id_estado.descripcion}}</td>
-                      <td>{{us.id_us.id_usuario.nombre}} {{us.id_us.id_usuario.apellido}}</td>
+                      <td>{{us.id_estado.descripcion}}</td>
+                      <td>{{us.id_usuario.nombre}} {{us.id_usuario.apellido}}</td>
                       <td>
                         <a name="" id="" class="btn btn-danger" href="{% url 'esprint' us.id %}" role="button">Eliminar</a>
                       </td>

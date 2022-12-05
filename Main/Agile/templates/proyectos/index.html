@@ -25,9 +25,15 @@
                     <td>{{ Proyecto.fecha_inicio }}</td>
                     <td>{{ Proyecto.fecha_fin }}</td>
                     <td>
-                        <a name="" id="" class="btn btn-info" href="mproy/{{Proyecto.nombre}}" role="button">Modificar</a>
+                        {% if modificar == True %}
+                            <a name="" id="" class="btn btn-info" href="mproy/{{Proyecto.nombre}}" role="button">Modificar</a>
+                        {% endif %}
+
+                        {% if eliminar == True %}
+                            <a name="" id="" class="btn btn-danger" href="{% url 'eproy' Proyecto.nombre 'baja' %}" role="button">Eliminar</a>
+                        {% endif %}
+
                         <a name="" id="" class="btn btn-primary" href="backlog/{{Proyecto.id}}" role="button">Backlog</a>
-                        <a name="" id="" class="btn btn-danger" href="{% url 'eproy' Proyecto.nombre 'baja' %}" role="button">Eliminar</a>
                     </td>
                 </tr>
                 {% endfor %}
