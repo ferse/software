@@ -303,8 +303,15 @@ def mus(request,id_us):
 
 #Pagina para listar User Story
 def us(request):
+    if not validarPermisos(request, 'LISTAR_USER_STORY'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_USER_STORY')
+    modificar = validarPermisos(request, 'MODIFICAR_USER_STORY')
+    eliminar = validarPermisos(request, 'ELIMINAR_USER_STORY')
+
     us = listar_us
-    return render(request,'paginas/us.html',{'us':us})
+    return render(request,'paginas/us.html',{'us':us, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 
 #Retorna todos los User Story de la base de datos
 def listar_us():
@@ -325,6 +332,13 @@ def bus(request, id_us, aux):
 
 #Listar y añadir US en Backlog
 def backlog(request,id_proyecto):
+    if not validarPermisos(request, 'LISTAR_BACKLOG'):
+        return redirect('home')
+    
+    nuevo = validarPermisos(request, 'NUEVO_BACKLOG')
+    modificar = validarPermisos(request, 'MODIFICAR_BACKLOG')
+    eliminar = validarPermisos(request, 'ELIMINAR_BACKLOG')
+
     user_story = listar_us()
     proyecto = buscar_proyecto(id_proyecto)
     us_backlog = listar_us_backlog(proyecto)
@@ -339,7 +353,7 @@ def backlog(request,id_proyecto):
                 messages.error(request,'El User Story ya esta añadido')
         else:
             messages.error(request,'Seleccione un User Story')
-    return render(request,'App/backlog.html',{'user_story':user_story,'us_backlog':us_backlog,'proyecto':proyecto})
+    return render(request,'App/backlog.html',{'user_story':user_story,'us_backlog':us_backlog,'proyecto':proyecto, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
 
 #Eliminar US de Backlog
 def eus(request,id_proyecto,id_us,aux):
@@ -470,19 +484,12 @@ def eproy(request, nombre, aux):
 
 def backlogs(request):
 
-    if not validarPermisos(request, 'LISTAR_BACKLOG'):
-        return redirect('home')
-    
-    nuevo = validarPermisos(request, 'NUEVO_BACKLOG')
-    modificar = validarPermisos(request, 'MODIFICAR_BACKLOG')
-    eliminar = validarPermisos(request, 'ELIMINAR_BACKLOG')
-    
     backlogs = Backlog.objects.values('id_proyecto').distinct()
     proyectos = []
     for b in backlogs:
         proyectos.append(buscar_proyecto(b['id_proyecto']))
     
-    return render(request,'paginas/backlogs.html',{'proyectos':proyectos, 'nuevo': nuevo, 'modificar': modificar, 'eliminar': eliminar})
+    return render(request,'paginas/backlogs.html',{'proyectos':proyectos})
 
 def sprint_activo(id_proyecto):
     estado = Estado_Sprint.objects.filter(id=2).first()
@@ -590,21 +597,11 @@ def bmiembro(request,id_proyecto,id_usuario):
 
 def userstory(request,id_us):
 
-    if not validarPermisos(request, 'LISTAR_USER_STORY'):
-        return redirect('home')
-    
-    nuevo = validarPermisos(request, 'NUEVO_USER_STORY')
-    modificar = validarPermisos(request, 'MODIFICAR_USER_STORY')
-    eliminar = validarPermisos(request, 'ELIMINAR_USER_STORY')
-
     us = buscar_us(id_us)
     comentarios = Comentario_Us.objects.filter(id_user_story=id_us).all()
     context = {
         'us' : us,
         'comentarios' : comentarios,
-        'nuevo': nuevo,
-        'modificar': modificar,
-        'eliminar': eliminar,
     }
     return render(request,'App/userstory.html',context=context)
         
@@ -635,10 +632,10 @@ def asprint(request):
 
             # verifica el estado del sprint
             hoy = datetime.now().date()
-            if hoy >= fecha_inicio and hoy <= fecha_fin:
+            if hoy >= sprint.fecha_inicio and hoy <= sprint.fecha_fin:
                 estado = Estado_Sprint.objects.filter(id=2).first()  # Doing
                 sprint.id_estado_sprint = estado
-            elif fecha_inicio < hoy and fecha_fin < hoy:
+            elif sprint.fecha_inicio < hoy and sprint.fecha_fin < hoy:
                 estado = Estado_Sprint.objects.filter(id=3).first()  # Done
                 sprint.id_estado_sprint = estado
             else:
