@@ -91,6 +91,10 @@ def salir(request):
 
 #Crear Usuario
 def ausuario(request):
+
+    if not validarPermisos(request, 'NUEVO_USUARIO'):
+        return redirect('home')
+
     if request.method == 'POST':
         alias = request.POST['alias']
         nombre = request.POST['nombre']        
@@ -265,6 +269,9 @@ def buscarP(nombre):
 
 #Crear User Story
 def aus(request):
+    if not validarPermisos(request, 'NUEVO_USER_STORY'):
+        return redirect('home')
+
     if request.method == 'POST':
         nombre = request.POST['nombre']
         descripcion = request.POST['descripcion']
@@ -428,6 +435,10 @@ def proyectos(request):
 
 #Crear Proyecto
 def aproyecto(request):
+
+    if not validarPermisos(request, 'NUEVO_PROYECTO'):
+        return redirect('home')
+
     if request.method == 'POST':
         nombre = request.POST['nombre']
         descripcion = request.POST['descripcion']
@@ -760,6 +771,9 @@ def burndown(request, id_proyecto):
 
 #Crear Permiso
 def apermiso(request):
+    if not validarPermisos(request, 'NUEVO_PERMISO'):
+        return redirect('home')
+
     if request.method == 'POST':
         nombre = request.POST['nombre']        
         descripcion = request.POST['descripcion']        
