@@ -494,6 +494,8 @@ def eproy(request, nombre, aux):
     return render(request,'proyectos/eliminar.html',{'nombre':nombre})
 
 def backlogs(request):
+    if not validarPermisos(request, 'NUEVO_BACKLOG'):
+        return redirect('home')
 
     backlogs = Backlog.objects.values('id_proyecto').distinct()
     proyectos = []
@@ -618,6 +620,9 @@ def userstory(request,id_us):
         
 #Crear SPRINT
 def asprint(request):
+    if not validarPermisos(request, 'NUEVO_SPRINT'):
+        return redirect('home')
+
     proyectos = listar_proyectos()
     context = {
         'proyectos' : proyectos
