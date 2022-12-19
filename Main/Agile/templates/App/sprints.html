@@ -33,7 +33,7 @@
 
 
                         {% if modificar == True %}
-                            <a name="" id="" class="btn btn-info" href="msprint/{{S.id}}" role="button">Modificar</a>
+                            <a name="" id="" class="btn btn-info" href="{% url 'msprint' S.id %}" role="button">Modificar</a>
                         {% endif %}
 
                         {% if iniciar == True %}
